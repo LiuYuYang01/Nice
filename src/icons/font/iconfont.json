@@ -1,0 +1,163 @@
+{
+  "id": "3704779",
+  "name": "Nice",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "201646",
+      "name": "3.1 设置",
+      "font_class": "31shezhi",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1221318",
+      "name": "应用",
+      "font_class": "applications",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "1304891",
+      "name": "应用中心",
+      "font_class": "yingyongzhongxin",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "2347922",
+      "name": "扩展组件",
+      "font_class": "extend",
+      "unicode": "e820",
+      "unicode_decimal": 59424
+    },
+    {
+      "icon_id": "4333456",
+      "name": "写字",
+      "font_class": "xiezi",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "5194061",
+      "name": "笔记本",
+      "font_class": "bijiben",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "6241494",
+      "name": "书笔记本",
+      "font_class": "shubijiben",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "6265060",
+      "name": "设置",
+      "font_class": "set-line",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "7165594",
+      "name": "应用",
+      "font_class": "yingyong",
+      "unicode": "e65a",
+      "unicode_decimal": 58970
+    },
+    {
+      "icon_id": "7553919",
+      "name": "素材库",
+      "font_class": "RectangleCopy",
+      "unicode": "e6e9",
+      "unicode_decimal": 59113
+    },
+    {
+      "icon_id": "10715436",
+      "name": "设置",
+      "font_class": "shezhi",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "11372647",
+      "name": "创作",
+      "font_class": "chuangzuo",
+      "unicode": "e8ad",
+      "unicode_decimal": 59565
+    },
+    {
+      "icon_id": "11391538",
+      "name": "我的",
+      "font_class": "wode",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "12476896",
+      "name": "创作",
+      "font_class": "chuangzuo1",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "13901302",
+      "name": "素材-outline",
+      "font_class": "sucai-outline",
+      "unicode": "e833",
+      "unicode_decimal": 59443
+    },
+    {
+      "icon_id": "15847646",
+      "name": "【系统】模型插件",
+      "font_class": "xitongmoxingchajian",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "18028218",
+      "name": "用户2",
+      "font_class": "yonghu2",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "21396811",
+      "name": "line-quill pen（羽毛笔）",
+      "font_class": "line-quillpenyumaobi",
+      "unicode": "e6eb",
+      "unicode_decimal": 59115
+    },
+    {
+      "icon_id": "25739378",
+      "name": "应用",
+      "font_class": "yingyong1",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "29150962",
+      "name": "导航栏-素材管理",
+      "font_class": "Union-1",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "31313024",
+      "name": "素材",
+      "font_class": "sucai",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "11121398",
+      "name": "主页",
+      "font_class": "zhuye",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    }
+  ]
+}

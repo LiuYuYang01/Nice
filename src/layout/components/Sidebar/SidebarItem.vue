@@ -1,0 +1,165 @@
+<template>
+  <div v-if="!item.hidden">
+    <template
+      v-if="
+        hasOneShowingChild(item.children, item) &&
+          (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
+          !item.alwaysShow
+      "
+    >
+      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
+        <el-menu-item :index="resolvePath(onlyOneChild.path)">
+          <!-- {{ onlyOneChild.meta }} -->
+          <!-- <item
+            :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
+            :title="onlyOneChild.meta.title"
+          /> -->
+          <span
+            class="navItem"
+            :style="{
+              fontSize: onlyOneChild.meta.size
+                ? onlyOneChild.meta.size
+                : '15px',
+              left: onlyOneChild.meta.left,
+            }"
+          ><i :class="[navIcon, onlyOneChild.meta.icon]" />
+            {{ onlyOneChild.meta.title }}</span>
+        </el-menu-item>
+      </app-link>
+    </template>
+
+    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
+      <template slot="title">
+        <!-- {{ item.meta }} -->
+        <!-- <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" /> -->
+        <span class="navItem" :style="{ fontSize: item.meta.size ? item.meta.size : '15px' }"><i :class="[navIcon, item.meta.icon]" /> {{ item.meta.title }}
+        </span>
+      </template>
+      <sidebar-item v-for="child in item.children" :key="child.path" :is-nest="true" :item="child" :base-path="resolvePath(child.path)" class="nest-menu" />
+    </el-submenu>
+  </div>
+</template>
+
+<script>
+import path from 'path'
+import { isExternal } from '@/utils/validate'
+// import Item from './Item'
+import AppLink from './Link'
+import FixiOSBug from './FixiOSBug'
+
+export default {
+  name: 'SidebarItem',
+  components: { AppLink },
+  mixins: [FixiOSBug],
+  props: {
+    // route object
+    item: {
+      type: Object,
+      required: true
+    },
+    isNest: {
+      type: Boolean,
+      default: false
+    },
+    basePath: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
+    // TODO: refactor with render function
+    this.onlyOneChild = null
+    return {
+      navIcon: 'iconfont '
+    }
+  },
+  methods: {
+    hasOneShowingChild(children = [], parent) {
+      const showingChildren = children.filter((item) => {
+        if (item.hidden) {
+          return false
+        } else {
+          // Temp set(will be used if only has one showing child)
+          this.onlyOneChild = item
+          return true
+        }
+      })
+
+      // When there is only one child router, the child router is displayed by default
+      if (showingChildren.length === 1) {
+        return true
+      }
+
+      // Show parent if there are no child router to display
+      if (showingChildren.length === 0) {
+        this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
+        return true
+      }
+
+      return false
+    },
+    resolvePath(routePath) {
+      if (isExternal(routePath)) {
+        return routePath
+      }
+      if (isExternal(this.basePath)) {
+        return this.basePath
+      }
+      return path.resolve(this.basePath, routePath)
+    }
+  }
+}
+</script>
+
+<style scoped>
+/* 一级分类颜色 */
+.submenu-title-noDropdown {
+  color: #8391a2 !important;
+}
+
+.iconfont {
+  font-size: 16px !important;
+}
+
+#app .sidebar-container .svg-icon {
+  margin-right: 0;
+}
+
+.navItem {
+  position: absolute;
+  width: auto !important;
+  height: auto !important;
+  left: 20px;
+  overflow: auto !important;
+  visibility: visible !important;
+  transition: all 0.5s;
+}
+.navItem i {
+  font-size: 18px !important;
+  margin-right: 15px;
+  transition: all 1s;
+}
+
+.el-menu-item:hover i,
+.el-menu-item:hover span {
+  color: #fff;
+}
+
+.el-submenu__title:hover i,
+.el-submenu__title:hover span {
+  color: #fff;
+}
+
+/deep/ .el-submenu__title {
+  height: 50px !important;
+}
+
+.is-active > .el-submenu__title i {
+  color: #fff;
+}
+
+/deep/ .el-submenu__icon-arrow{
+  font-weight: 900 !important;
+}
+</style>
