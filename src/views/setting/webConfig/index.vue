@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="content">
-      <el-tabs :tab-position="tabPosition" style="height: 200px">
+      <el-tabs :tab-position="tabPosition">
         <el-tab-pane label="站点配置">
           <el-row>
             <el-col :span="8">
@@ -168,10 +168,15 @@ export default {
 
 <style lang="scss" scoped>
 .content {
-  // width: 700px;
   width: 100%;
   padding: 50px;
 }
+
+::v-deep .el-tabs--top{
+  padding: 50px;
+    background-color: #fff !important;
+}
+
 .el-upload {
   width: 100%;
 }

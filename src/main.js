@@ -23,6 +23,23 @@ import '@/icons/font/iconfont.css'
 
 import '@/styles/index.css'
 
+// 引入v-md-editor 开始代码
+import VueMarkdownEditor from '@kangc/v-md-editor'
+import '@kangc/v-md-editor/lib/style/base-editor.css'
+import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
+import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
+import Prism from 'prismjs'
+VueMarkdownEditor.use(vuepressTheme, {
+  Prism
+})
+// VueMarkdownEditor.use(githubTheme, {
+//   codeHighlightExtensionMap: {
+//     vue: 'xml'
+//   }
+// })
+Vue.use(VueMarkdownEditor)
+// v-md-editor 结束代码
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -47,5 +64,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App)
 })

@@ -180,7 +180,8 @@ export default {
 
 <style lang="scss" scoped>
 .content {
-  padding: 50px;
+  padding: 50px 100px;
+  background-color: #fff;
 }
 
 /* 内容居中 */
