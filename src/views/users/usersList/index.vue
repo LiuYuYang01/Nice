@@ -4,7 +4,7 @@
     <el-row type="flex" justify="space-between">
       <!-- 添加用户 -->
       <el-row>
-        <el-button type="primary" size="small">添加用户</el-button>
+        <el-button type="primary" size="small" @click="DialogVisible = true">添加用户</el-button>
       </el-row>
 
       <!-- 搜索框 -->
@@ -58,6 +58,36 @@
     <el-row type="flex" justify="end" style="margin-top:20px">
       <el-pagination background layout="prev, pager, next" :total="1000" />
     </el-row>
+
+    <!-- 对话框 -->
+    <el-dialog :title="title" :visible.sync="DialogVisible" width="30%" :before-close="cancel">
+      <el-form ref="users" :model="users" :rules="usersVerify" label-width="80px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="users.username" />
+        </el-form-item>
+
+        <el-form-item label="身份" prop="identity">
+          <el-select v-model="users.identity" placeholder="请选择用户的身份" style="width:90%">
+            <el-option label="用户" value="用户" />
+            <el-option label="作者" value="作者" />
+            <el-option label="管理员" value="管理员" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="名称" prop="nickname">
+          <el-input v-model="users.nickname" />
+        </el-form-item>
+
+        <el-form-item label="邮箱" prop="mailbox">
+          <el-input v-model="users.mailbox" />
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="btnOk">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -167,12 +197,60 @@ export default {
           state: true,
           date: '2022-10-19-16:30'
         }
-      ]
+      ],
+      title: '新增用户',
+      DialogVisible: false,
+      // 用户信息
+      users: {
+        username: '',
+        identity: '',
+        nickname: '',
+        mailbox: ''
+      },
+      // 用户校验
+      usersVerify: {
+        username: [
+          { required: true, message: '用户名不能为空', trigger: 'blur' },
+          { min: 6, max: 16, message: '用户名长度在 6 到 16 个字符', trigger: 'blur' }
+        ],
+        nickname: [
+          { required: true, message: '名称不能为空' },
+          { min: 1, max: 10, message: '名称长度在 1 ~ 10 个字符' }
+        ],
+        mailbox: [
+          { required: true, message: '邮箱不能为空' },
+          { min: 1, max: 20, message: '邮箱长度在 1 ~ 20 个字符' }
+        ]
+      }
     }
   },
   methods: {
     formatter(row, column) {
       return row.address
+    },
+    // 点击右上角关闭按钮触发
+    handleClose(val) {
+      console.log('已关闭')
+    },
+    // 取消
+    cancel() {
+      // 重置数据
+      this.users = {
+        username: '',
+        identity: '',
+        nickname: '',
+        mailbox: ''
+      }
+
+      // 重置检验
+      this.$refs.users.resetFields()
+
+      // 关闭弹出框
+      this.DialogVisible = false
+    },
+    // 确定
+    btnOk() {
+
     }
   }
 }
@@ -215,5 +293,26 @@ export default {
   border: 1px solid #727cf5 !important;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
+}
+
+// 提示框标题背景
+::v-deep .el-dialog__header {
+  background-color: #727cf5;
+}
+
+::v-deep .el-dialog__title {
+  color: #fff !important;
+}
+
+::v-deep .el-dialog__headerbtn .el-dialog__close {
+  color: #fff !important;
+}
+
+::v-deep .el-input__inner {
+  width: 90% !important;
+}
+
+::v-deep .el-dialog__body {
+  padding-bottom: 0px;
 }
 </style>

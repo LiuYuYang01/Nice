@@ -6,7 +6,7 @@ export default {
   meta: { title: '创作', icon: 'icon-chuangzuo' },
   children: [
     {
-      path: 'write',
+      path: '',
       component: () => import('@/views/write/index'),
       meta: { title: '发布笔记', size: '14px', left: '40px' }
     },

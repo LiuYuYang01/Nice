@@ -6,7 +6,7 @@ export default {
   meta: { title: '用户', icon: 'icon-wode' },
   children: [
     {
-      path: 'usersList',
+      path: '',
       component: () => import('@/views/users/usersList/index'),
       meta: { title: '用户列表', size: '14px', left: '40px' }
     },
@@ -17,7 +17,7 @@ export default {
       meta: { title: '用户权限', size: '14px', left: '40px' }
     },
     {
-      path: 'web',
+      path: 'web1',
       // component: () => import('@/views/write/ceshi/index'),
       component: () => import('@/views/setting/webConfig/index'),
       meta: { title: '用户头衔', size: '14px', left: '40px' }

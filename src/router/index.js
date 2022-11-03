@@ -8,6 +8,7 @@ Vue.use(Router)
 import home from '@/router/modules/home'
 import setting from '@/router/modules/setting'
 import write from '@/router/modules/write'
+import manage from '@/router/modules/manage'
 import users from '@/router/modules/users'
 import extend from '@/router/modules/extend'
 import material from '@/router/modules/material'
@@ -51,6 +52,7 @@ export const constantRoutes = [
   { path: '*', redirect: '/404', hidden: true },
   home,
   write,
+  manage,
   users,
   extend,
   material,

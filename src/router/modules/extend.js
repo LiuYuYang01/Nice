@@ -7,7 +7,7 @@ export default {
     {
       path: '',
       component: () => import('@/views/extend/index'),
-      meta: { title: '扩展', icon: 'icon-yingyong' }
+      meta: { title: '扩展', icon: 'icon-icon_yingyongguanli' }
     }
   ]
 }

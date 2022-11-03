@@ -6,7 +6,7 @@ export default {
   meta: { title: '设置', icon: 'icon-31shezhi' },
   children: [
     {
-      path: 'setting',
+      path: '',
       component: () => import('@/views/setting/index'),
       meta: { title: '系统配置', size: '14px', left: '40px' }
     },
