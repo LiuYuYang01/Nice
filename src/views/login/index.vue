@@ -3,7 +3,8 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">管理员登录</h3>
+        <p style="color:#bebebe">Nice 一款逐渐强大的 CMS 管理系统</p>
       </div>
 
       <el-form-item prop="username">
@@ -214,11 +215,12 @@ $light_gray:#eee;
 
   .title-container {
     position: relative;
+    text-align: center;
 
     .title {
       font-size: 26px;
       color: $light_gray;
-      margin: 0px auto 40px auto;
+      margin: 0px auto 10px auto;
       text-align: center;
       font-weight: bold;
     }

@@ -58,6 +58,13 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 
+// 自定义的过滤器
+import { imageNull, dateFormat } from '@/filter/index'
+
+// 自定义过滤器，有头像就显示头像，没有头像就显示默认头像
+Vue.filter('imageNull', imageNull)
+Vue.filter('dateFormat', dateFormat)
+
 Vue.config.productionTip = false
 
 new Vue({

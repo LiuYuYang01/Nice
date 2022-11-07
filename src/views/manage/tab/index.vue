@@ -16,7 +16,7 @@
       </el-row>
 
       <el-tab-pane name="essay">
-        <span slot="label"><i class="el-icon-s-grid" /> 友联列表</span>
+        <span slot="label"><i class="el-icon-s-grid" /> 标签列表</span>
 
         <!-- 用户列表信息 -->
         <el-table :data="essayData" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">

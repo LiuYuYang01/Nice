@@ -1,96 +1,94 @@
 <template>
-  <div>
-    <div class="content">
-      <el-tabs :tab-position="tabPosition">
-        <el-tab-pane label="站点配置">
-          <el-row>
-            <el-col :span="8">
-              <el-form ref="form" :model="siteConfig" label-width="80px" style="margin-top:15px">
-                <el-form-item label="站点域名">
-                  <el-input v-model="siteConfig.url" disabled />
-                </el-form-item>
+  <div class="content">
+    <el-tabs :tab-position="tabPosition">
+      <el-tab-pane label="站点配置">
+        <el-row>
+          <el-col :span="8">
+            <el-form ref="form" :model="siteConfig" label-width="80px" style="margin-top:15px">
+              <el-form-item label="站点域名">
+                <el-input v-model="siteConfig.url" disabled />
+              </el-form-item>
 
-                <el-form-item label="LOGO">
-                  <el-input v-model="siteConfig.logo" />
-                </el-form-item>
+              <el-form-item label="LOGO">
+                <el-input v-model="siteConfig.logo" />
+              </el-form-item>
 
-                <el-form-item label="站点标题">
-                  <el-input v-model="siteConfig.title" />
-                </el-form-item>
+              <el-form-item label="站点标题">
+                <el-input v-model="siteConfig.title" />
+              </el-form-item>
 
-                <el-form-item label="副标题">
-                  <el-input v-model="siteConfig.deputyTitle" />
-                </el-form-item>
+              <el-form-item label="副标题">
+                <el-input v-model="siteConfig.deputyTitle" />
+              </el-form-item>
 
-                <el-form-item label="关键词">
-                  <el-input v-model="siteConfig.keyword" />
-                </el-form-item>
+              <el-form-item label="关键词">
+                <el-input v-model="siteConfig.keyword" />
+              </el-form-item>
 
-                <el-form-item label="站点描述">
-                  <el-input v-model="siteConfig.description" type="textarea" placeholder="请输入站点描述内容" maxlength="50" show-word-limit />
-                </el-form-item>
+              <el-form-item label="站点描述">
+                <el-input v-model="siteConfig.description" type="textarea" placeholder="请输入站点描述内容" maxlength="50" show-word-limit />
+              </el-form-item>
 
-                <el-form-item>
-                  <el-button type="primary" style="width: 100%" @click="onSubmit">保存</el-button>
-                </el-form-item>
-              </el-form>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
+              <el-form-item>
+                <el-button type="primary" style="width: 100%" @click="onSubmit">保存</el-button>
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
 
-        <el-tab-pane label="轮播图设置">
-          <el-row>
-            <el-col :span="9">
-              <!-- 添加轮播图 -->
-              <el-form ref="form" :model="bannerConfig" label-width="80px" style="margin-top:15px">
-                <el-form-item label="标题">
-                  <el-input v-model="bannerConfig.title" />
-                </el-form-item>
+      <el-tab-pane label="轮播图设置">
+        <el-row>
+          <el-col :span="9">
+            <!-- 添加轮播图 -->
+            <el-form ref="form" :model="bannerConfig" label-width="80px" style="margin-top:15px">
+              <el-form-item label="标题">
+                <el-input v-model="bannerConfig.title" />
+              </el-form-item>
 
-                <el-form-item label="副标题">
-                  <el-input v-model="bannerConfig.deputyTitle" />
-                </el-form-item>
+              <el-form-item label="副标题">
+                <el-input v-model="bannerConfig.deputyTitle" />
+              </el-form-item>
 
-                <el-form-item label="轮播图">
-                  <el-input v-model="bannerConfig.image" />
+              <el-form-item label="轮播图">
+                <el-input v-model="bannerConfig.image" />
 
-                  <!-- 上传轮播图 -->
-                  <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple :on-preview="handlePreview">
-                    <i class="el-icon-upload" />
-                    <div class="el-upload__text">将文件拖到此处，或<em> 点击上传</em></div>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg / png文件，且不超过 <b>500kb</b></div>
-                  </el-upload>
-                </el-form-item>
+                <!-- 上传轮播图 -->
+                <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple :on-preview="handlePreview">
+                  <i class="el-icon-upload" />
+                  <div class="el-upload__text">将文件拖到此处，或<em> 点击上传</em></div>
+                  <div slot="tip" class="el-upload__tip">只能上传jpg / png文件，且不超过 <b>500kb</b></div>
+                </el-upload>
+              </el-form-item>
 
-                <el-form-item>
-                  <el-button type="primary" style="width: 100%" @click="onSubmit">添加</el-button>
-                </el-form-item>
-              </el-form>
-            </el-col>
+              <el-form-item>
+                <el-button type="primary" style="width: 100%" @click="onSubmit">添加</el-button>
+              </el-form-item>
+            </el-form>
+          </el-col>
 
-            <el-col :span="12" style="margin-left:120px">
-              <!-- 轮播图列表 -->
-              <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55" />
-                <el-table-column label="日期" width="120">
-                  <template slot-scope="scope">{{ scope.row.time }}</template>
-                </el-table-column>
-                <el-table-column prop="title" label="标题" width="200" />
-                <el-table-column prop="deputyTitle" width="300" label="副标题" />
-                <el-table-column prop="image" width="400" label="轮播图" />
-              </el-table>
+          <el-col :span="12" style="margin-left:120px">
+            <!-- 轮播图列表 -->
+            <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" />
+              <el-table-column label="日期" width="120">
+                <template slot-scope="scope">{{ scope.row.time }}</template>
+              </el-table-column>
+              <el-table-column prop="title" label="标题" width="200" />
+              <el-table-column prop="deputyTitle" width="300" label="副标题" />
+              <el-table-column prop="image" width="400" label="轮播图" />
+            </el-table>
 
-              <!-- 操作 -->
-              <el-row type="flex" justify="end" style="margin-top:20px">
-                <el-button size="mini" @click="handleDelete(scope.$index, scope.row)">查看</el-button>
-                <el-button size="mini" type="primary">编辑</el-button>
-                <el-button size="mini" type="danger">删除</el-button>
-              </el-row>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
+            <!-- 操作 -->
+            <el-row type="flex" justify="end" style="margin-top:20px">
+              <el-button size="mini" @click="handleDelete(scope.$index, scope.row)">查看</el-button>
+              <el-button size="mini" type="primary">编辑</el-button>
+              <el-button size="mini" type="danger">删除</el-button>
+            </el-row>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -168,13 +166,13 @@ export default {
 
 <style lang="scss" scoped>
 .content {
-  width: 100%;
-  padding: 50px;
+  margin: 50px 100px;
+  padding: 0 !important;
 }
 
 ::v-deep .el-tabs--top{
   padding: 50px;
-    background-color: #fff !important;
+  background-color: #fff !important;
 }
 
 .el-upload {
