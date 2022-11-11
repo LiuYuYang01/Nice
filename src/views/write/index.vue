@@ -187,7 +187,10 @@ export default {
     },
     createFilter(queryString) {
       return (restaurant) => {
-        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        )
       }
     },
     // 所有标签
@@ -210,6 +213,8 @@ export default {
 <style lang="scss" scoped>
 .content {
   padding: 20px 100px;
+  background-color: #f9f9f9;
+  box-shadow: none;
 }
 // 侧边栏
 .sidebar {

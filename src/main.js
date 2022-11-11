@@ -32,6 +32,11 @@ import Prism from 'prismjs'
 VueMarkdownEditor.use(vuepressTheme, {
   Prism
 })
+
+// 将组件安装到全局
+import component from '@/components/index'
+Vue.use(component)
+
 // VueMarkdownEditor.use(githubTheme, {
 //   codeHighlightExtensionMap: {
 //     vue: 'xml'

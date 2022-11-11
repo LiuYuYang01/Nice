@@ -1,60 +1,54 @@
 <template>
   <div class="content">
-    <el-tabs v-model="activeName">
-      <!-- 搜索 -->
-      <el-row type="flex" justify="space-between">
-        <el-row>
-          <div />
-        </el-row>
+    <div class="list">
+      <div v-for="(item,index) in list" :key="index" class="item">
+        <img :src="item.image" alt="">
+        <h4 style="color: #444">{{ item.name }}</h4>
+        <span class="mailbox">{{ item.mailbox }}</span>
+        <p>{{ item.description }}</p>
 
-        <!-- 搜索框 -->
-        <el-row>
-          <el-input v-model="search" size="small" placeholder="请输入关键词" class="input-with-select" style="width:300px;margin-bottom:20px">
-            <el-button slot="append" size="small" type="primary" icon="el-icon-search" class="searchButton" style="height:33px" />
-          </el-input>
-        </el-row>
-      </el-row>
+        <!-- 操作 -->
+        <div class="operate">
+          <i class="el-icon-edit-outline" />
+          <i class="el-icon-delete" />
+        </div>
+      </div>
 
-      <el-tab-pane name="essay">
-        <span slot="label"><i class="el-icon-s-grid" /> 友联列表</span>
+      <!-- 添加友联 -->
+      <div class="item" @click="add">
+        <i class="el-icon-plus" />
+      </div>
+    </div>
 
-        <!-- 用户列表信息 -->
-        <el-table :data="essayData" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
-          <el-table-column label="ID" align="center" sortable width="100" prop="id" />
+    <!-- 对话框 -->
+    <el-dialog :title="title" :visible.sync="DialogVisible" width="30%">
+      <el-form ref="link" :model="link" :rules="linkVerify" label-width="80px">
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="link.name" />
+        </el-form-item>
 
-          <el-table-column prop="title" label="标题" align="center" width="400">
-            <template slot-scope="{row}">
-              <a href="#/write" class="hoverTitle">{{ row.title }}</a>
-            </template>
-          </el-table-column>
+        <el-form-item label="链接" prop="url">
+          <el-input v-model="link.url" />
+        </el-form-item>
 
-          <el-table-column prop="author" label="作者" align="center" sortable width="180" />
+        <el-form-item label="邮箱" prop="mailbox">
+          <el-input v-model="link.mailbox" />
+        </el-form-item>
 
-          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+        <el-form-item label="图标" prop="image">
+          <el-input v-model="link.image" />
+        </el-form-item>
 
-          <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
-            <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
-          </el-table-column>
+        <el-form-item label="描述" prop="description">
+          <el-input v-model="link.description" />
+        </el-form-item>
+      </el-form>
 
-          <el-table-column fixed="right" label="操作" width="150" align="center">
-            <template slot-scope="{row}">
-              <el-row type="flex" justify="center">
-                <!-- 为什么点击编辑跳转到编辑页，然后再回退到之前的页面就会报错？ -->
-                <!-- 为什么点击编辑跳转到编辑页，然后再回退到之前的页面就会报错？ -->
-                <!-- 为什么点击编辑跳转到编辑页，然后再回退到之前的页面就会报错？ -->
-                <el-button type="text" size="small" @click="$router.push('/write')">编辑</el-button>
-                <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
-              </el-row>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <!-- 分页 -->
-        <el-row type="flex" justify="end" style="margin-top:40px">
-          <el-pagination background layout="prev, pager, next" :total="1000" />
-        </el-row>
-      </el-tab-pane>
-    </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button>取 消</el-button>
+        <el-button type="primary">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -62,106 +56,85 @@
 export default {
   data() {
     return {
-      search: '',
-      essayData: [
+      list: [
         {
-          id: 1,
-          title: '尤雨溪回应：Vite 真的比 Turbopack 慢 10 倍吗？',
-          author: '晨曦时梦见兮',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
+          name: '全栈梦想家',
+          image: 'http://q1.qlogo.cn/g?b=qq&nk=3311118881&s=640',
+          mailbox: 'liuyuyang1o24@163.com',
+          description: '记录一个架构师的诞生'
         },
         {
-          id: 2,
-          title: '程序员需不需要懂业务、懂市场？2022掘金未来大会前瞻',
-          author: '稀土君',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
+          name: '小孙同学',
+          image: 'https://sunguoqi.com/images/avatar.jpg',
+          mailbox: '无邮箱',
+          description: '一个理性的浪漫主义者！'
         },
         {
-          id: 3,
-          title: 'Web3.0对前端很友好？',
-          author: 'hawleyHuo',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
+          name: 'Mlldxe s Blog',
+          image: 'https://yy.liveout.cn/photo/mlldxe.jpg',
+          mailbox: '无邮箱',
+          description: '一个不学无术的伪程序猿'
         },
         {
-          id: 4,
-          title: 'Flutter 工程化框架选择 — add-to-app 的指路明灯',
-          author: '恋猫de小郭',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
+          name: 'Grape',
+          image:
+            'http://vgrape.com/wp-content/uploads/2021/11/1636502736844.jpg',
+          mailbox: 'liuyuyang1o24@163.com',
+          description: '一位正在考研的朋友'
         },
         {
-          id: 5,
-          title: '“无架构”和“MVP”都救不了业务代码，MVVM能力挽狂澜？（一）',
-          author: '唐子玄',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
+          name: '贰猹的小窝',
+          image: 'https://pub-noionion.oss-cn-hangzhou.aliyuncs.com/head.jpg',
+          mailbox: '无邮箱',
+          description: '用这生命中的每一秒，给自己一个不后悔的未来'
         },
         {
-          id: 6,
-          title: '前端JS手写编程题库，终于开源了 Github',
-          author: 'sunny',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 7,
-          title: 'Nest.js进阶系列五： Node.js中使用Redis原来这么简单',
-          author: 'ikoala',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 8,
-          title: 'Java 面试题：ArrayList 可以完全替代数组吗？',
-          author: '彭旭锐',
-          cate: 'Java',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 9,
-          title: 'React 之 Refs 的使用和 forwardRef 的源码解读',
-          author: '冴羽',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 10,
-          title: '全栈开发—Vue+Element+Koa 实战发布平台CRUD！',
-          author: '井柏然',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
+          name: '安知鱼 `Blog',
+          image:
+            'https://image.anzhiy.cn/adminuploads/1/2022/09/15/63232b7d91d22.jpg',
+          mailbox: '无邮箱',
+          description: '生活明朗，万物可爱'
         }
       ],
+      title: '新增友联',
       DialogVisible: false,
-      activeName: 'essay'
+      // 友联
+      link: {
+        name: '',
+        mark: '',
+        level: '',
+        description: ''
+      },
+      // 友联校验
+      linkVerify: {
+        name: [
+          { required: true, message: '友联名称不能为空', trigger: 'blur' },
+          {
+            min: 1,
+            max: 10,
+            message: '友联名称长度在 1 ~ 10 个字符',
+            trigger: 'blur'
+          }
+        ],
+        url: [
+          { required: true, message: '友联链接不能为空' },
+          { min: 1, max: 50, message: '友联链接长度在 1 ~ 50 个字符' }
+        ],
+        mailbox: [
+          { required: true, message: '友联邮箱不能为空' },
+          { min: 1, max: 50, message: '友联邮箱长度在 1 ~ 50 个字符' }
+        ],
+        image: [{ required: true, message: '友联图标不能为空' }],
+        description: [
+          { required: true, message: '友联描述不能为空' },
+          { min: 1, max: 50, message: '友联描述长度在 1 ~ 50 个字符' }
+        ]
+      }
     }
   },
   methods: {
-    del(id) {
-      this.$confirm('你确定要删除吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.essayData.filter((item, index) => {
-            if (item.id === id) this.essayData.splice(index, 1)
-          })
-
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
+    add() {
+      this.DialogVisible = true
     }
   }
 }
@@ -171,64 +144,121 @@ export default {
 .content {
   margin: 50px 100px;
   padding: 50px !important;
-}
 
-/* 内容居中 */
-.el-table__body td {
-  text-align: center;
-}
+  // 友联列表
+  .list {
+    overflow: hidden;
+    width: 1110px;
+    margin: 0 auto;
 
-// 表格滚动条
-::v-deep .el-table__body-wrapper::-webkit-scrollbar {
-  width: 6px; // 横向滚动条
-  height: 8px; // 纵向滚动条 必写
-}
-// 滚动条的滑块
-::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
-  background-color: #ddd;
-  border-radius: 3px;
-}
+    .item {
+      overflow: hidden;
+      position: relative;
+      float: left;
+      width: 200px;
+      min-height: 280px;
+      padding: 20px;
+      padding-bottom: 10px;
+      margin: 5px 20px 15px 5px;
+      border-radius: 5px;
+      box-shadow: 0 1px 4px rgb(121 122 243 / 20%);
+      text-align: center;
 
-.el-switch {
-  width: 120px;
-}
+      .mailbox {
+        font-size: 13px;
+        color: #666;
+      }
 
-::v-deep .el-table__fixed-right {
-  height: 100% !important;
-}
+      p {
+        color: #333;
+        font-size: 15px;
+        font-family: "黑体";
+        // 超出省略
+        display: -webkit-box !important;
+        overflow: hidden;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+      }
 
-// 搜索按钮
-.searchButton {
-  color: #fff !important;
-  background-color: #727cf5 !important;
-  border: 1px solid #727cf5 !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
+      h4 {
+        margin: 10px 0;
+      }
+
+      img {
+        position: relative;
+        width: 50%;
+        border-radius: 50%;
+        z-index: 1;
+      }
+
+      .operate {
+        position: absolute;
+        bottom: 15px;
+        right: 20px;
+        font-size: 20px;
+
+        i {
+          margin-left: 20px;
+          cursor: pointer;
+
+          &:nth-child(1) {
+            color: #727cf5;
+          }
+
+          &:nth-child(2) {
+            color: #f56c6c;
+          }
+        }
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        background-color: #727cf5;
+        border-bottom-left-radius: 100%;
+        border-bottom-right-radius: 100%;
+      }
+
+      &:nth-child(5n) {
+        margin-right: 0;
+      }
+
+      // 最后一个样式单独设置
+      &:last-child::after {
+        display: none;
+      }
+      &:last-child {
+        font-size: 50px;
+        line-height: 230px;
+        color: #e2e2e2;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      &:last-child:hover {
+        color: #727cf5;
+      }
+    }
+  }
 }
 
 // 提示框标题背景
 ::v-deep .el-dialog__header {
   background-color: #727cf5;
+  padding-bottom: 17px;
 }
-
 ::v-deep .el-dialog__title {
   color: #fff !important;
 }
-
-::v-deep .el-dialog__headerbtn .el-dialog__close {
-  color: #fff !important;
-}
-
-::v-deep .el-input__inner {
-  width: 100% !important;
-}
-
 ::v-deep .el-dialog__body {
-  padding-bottom: 0px;
+  padding: 30px 40px 0px 10px;
 }
-
-.hoverTitle:hover {
-  color: #727cf5;
-  transition: 0.3s;
+::v-deep .el-dialog__headerbtn .el-dialog__close{
+  color: #fff;
 }
 </style>

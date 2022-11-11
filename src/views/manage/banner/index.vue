@@ -1,5 +1,6 @@
 <template>
   <div class="content">
+    <h3 class="title">轮播图管理</h3>
     <el-row>
       <el-col :span="9">
         <!-- 添加轮播图 -->
@@ -118,6 +119,11 @@ export default {
 .content {
   margin: 50px 100px;
   padding: 50px !important;
+}
+
+.title {
+  margin: 0;
+  margin-bottom: 20px;
 }
 
 ::v-deep .el-tabs--top{

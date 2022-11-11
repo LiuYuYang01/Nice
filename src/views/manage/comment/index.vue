@@ -69,8 +69,8 @@
 
           <el-table-column fixed="right" label="操作" width="150" align="center">
             <template>
-              <el-button type="text" size="small" style="color:#49b984">通过</el-button>
-              <el-button type="text" size="small" style="color:#709ed1">回复</el-button>
+              <el-button type="text" size="small">通过</el-button>
+              <el-button type="text" size="small" style="color:#49b984">回复</el-button>
             </template>
           </el-table-column>
         </el-table>

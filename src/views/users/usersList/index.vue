@@ -67,7 +67,7 @@
         </el-form-item>
 
         <el-form-item label="身份" prop="identity">
-          <el-select v-model="users.identity" placeholder="请选择用户的身份" style="width:90%">
+          <el-select v-model="users.identity" placeholder="请选择用户的身份" style="width:100%">
             <el-option label="用户" value="用户" />
             <el-option label="作者" value="作者" />
             <el-option label="管理员" value="管理员" />
@@ -319,6 +319,7 @@ export default {
 // 提示框标题背景
 ::v-deep .el-dialog__header {
   background-color: #727cf5;
+  padding-bottom: 17px;
 }
 
 ::v-deep .el-dialog__title {
@@ -334,6 +335,6 @@ export default {
 }
 
 ::v-deep .el-dialog__body {
-  padding-bottom: 0px;
+  padding: 30px 40px 0px 10px;
 }
 </style>
