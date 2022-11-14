@@ -112,7 +112,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "~@/styles/variables.scss";
 /* 一级分类颜色 */
 .submenu-title-noDropdown {
   color: #8391a2 !important;
@@ -133,33 +134,60 @@ export default {
   left: 20px;
   overflow: auto !important;
   visibility: visible !important;
-  transition: all 0.5s;
+  transition: all 0.3s;
 }
 .navItem i {
   font-size: 18px !important;
   margin-right: 15px;
-  transition: all 1s;
+  transition: all 0.3s;
+  color: $menuText;
 }
 
+// 一级分类当前被选中的
+.is-active i {
+  color: $menuActiveText !important;
+}
+
+// 一级导航颜色
 .el-menu-item:hover i,
 .el-menu-item:hover span {
-  color: #fff;
+  color: $menuActiveText;
 }
 
+// 二级导航颜色
 .el-submenu__title:hover i,
 .el-submenu__title:hover span {
-  color: #fff;
+  color: $menuActiveText;
 }
 
-/deep/ .el-submenu__title {
+// 下拉箭头颜色
+::v-deep .el-submenu__title .el-submenu__icon-arrow {
+  color: $menuText !important;
+}
+
+/* 下拉箭头被选中 */
+::v-deep .el-submenu__title .el-submenu__icon-arrow {
+  transition: all 0.3s;
+}
+
+// 二级导航选中颜色
+::v-deep .el-submenu.is-active > .el-submenu__title .el-submenu__icon-arrow {
+  color: $menuActiveText !important;
+}
+
+::v-deep .el-submenu__title:hover .el-submenu__icon-arrow {
+  color: $menuActiveText !important;
+}
+
+::v-deep .el-submenu__title {
   height: 50px !important;
 }
 
 .is-active > .el-submenu__title i {
-  color: #fff;
+  color: $menuActiveText;
 }
 
-/deep/ .el-submenu__icon-arrow{
+::v-deep .el-submenu__icon-arrow {
   font-weight: 900 !important;
 }
 </style>

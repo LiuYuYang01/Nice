@@ -291,7 +291,7 @@ export default {
 // 表格滚动条
 ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
   width: 6px; // 横向滚动条
-  height: 8px; // 纵向滚动条 必写
+  height: 6px; // 纵向滚动条 必写
 }
 // 滚动条的滑块
 ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {

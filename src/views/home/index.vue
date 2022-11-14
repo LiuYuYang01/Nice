@@ -87,54 +87,55 @@ export default {
     line-height: 30px;
     font-size: 15px;
   }
-}
-.chart {
-  h3 {
-    margin: 0;
-  }
-  .el-col {
-    width: 24.1%;
-    height: 250px;
-    border-radius: 3px;
-    background-color: #fff;
-    box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
 
+  .chart {
     h3 {
-      position: relative;
-      top: 30px;
-      left: 30px;
+      margin: 0;
     }
+    .el-col {
+      width: 24.1%;
+      height: 250px;
+      border-radius: 3px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
 
-    .toBeDone {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      height: 170px;
-      margin-top: 50px;
+      h3 {
+        position: relative;
+        top: 30px;
+        left: 30px;
+      }
 
-      .item {
+      .toBeDone {
         display: flex;
-        flex-direction: column;
         justify-content: center;
-        width: 43%;
-        margin: 0 10px 10px 0;
-        text-align: center;
-        background-color: #f8f8f8;
+        flex-wrap: wrap;
+        height: 170px;
+        margin-top: 50px;
 
-        &:nth-of-type(2n) {
-          margin-right: 0;
-        }
+        .item {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          width: 43%;
+          margin: 0 10px 10px 0;
+          text-align: center;
+          background-color: #f8f8f8;
 
-        span {
-          font-size: 13px;
-          color: #333;
-          margin-bottom: 10px;
-        }
+          &:nth-of-type(2n) {
+            margin-right: 0;
+          }
 
-        h4 {
-          margin: 0;
-          font-size: 25px;
-          color: #727cf5;
+          span {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 10px;
+          }
+
+          h4 {
+            margin: 0;
+            font-size: 25px;
+            color: #727cf5;
+          }
         }
       }
     }

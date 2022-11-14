@@ -91,7 +91,20 @@ export default {
   width: 100%;
 }
 
+// 菜单栏背景色
 .sidebar-container {
-  background-color: #313a46 !important;
+  background: $menuBg;
+  // 导航栏右侧边框
+  // border-right: $borderRight;
+  box-shadow: $boxShadow;
+}
+
+::v-deep .el-menu {
+  background-color: transparent !important;
+}
+
+// 一级导航鼠标经过颜色
+::v-deep .el-menu-item:hover {
+  background-color: $oneMenuHover !important;
 }
 </style>

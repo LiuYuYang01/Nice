@@ -32,6 +32,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "~@/styles/variables.scss";
 .sidebarLogoFade-enter-active {
   transition: opacity 1.5s;
 }
@@ -64,7 +65,7 @@ export default {
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
+      color: $title;
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;

@@ -2,16 +2,18 @@
   <div class="content">
     <div class="list">
       <div v-for="(item,index) in list" :key="index" class="item">
-        <img :src="item.image" alt="">
-        <h4 style="color: #444">{{ item.name }}</h4>
-        <span class="mailbox">{{ item.mailbox }}</span>
-        <p>{{ item.description }}</p>
+        <a :href="item.url" target="_blank">
+          <img :src="item.image" alt="">
+          <h4 style="color: #444">{{ item.name }}</h4>
+          <span class="mailbox">{{ item.mailbox }}</span>
+          <p>{{ item.description }}</p>
 
-        <!-- 操作 -->
-        <div class="operate">
-          <i class="el-icon-edit-outline" />
-          <i class="el-icon-delete" />
-        </div>
+          <!-- 操作 -->
+          <div class="operate">
+            <i class="el-icon-edit-outline" @click="emit(index)" />
+            <i class="el-icon-delete" @click="del(index)" />
+          </div>
+        </a>
       </div>
 
       <!-- 添加友联 -->
@@ -61,18 +63,21 @@ export default {
           name: '全栈梦想家',
           image: 'http://q1.qlogo.cn/g?b=qq&nk=3311118881&s=640',
           mailbox: 'liuyuyang1o24@163.com',
+          url: 'http://liuyuyang.net',
           description: '记录一个架构师的诞生'
         },
         {
           name: '小孙同学',
           image: 'https://sunguoqi.com/images/avatar.jpg',
           mailbox: '无邮箱',
+          url: 'http://liuyuyang.net',
           description: '一个理性的浪漫主义者！'
         },
         {
           name: 'Mlldxe s Blog',
           image: 'https://yy.liveout.cn/photo/mlldxe.jpg',
           mailbox: '无邮箱',
+          url: 'http://liuyuyang.net',
           description: '一个不学无术的伪程序猿'
         },
         {
@@ -80,12 +85,14 @@ export default {
           image:
             'http://vgrape.com/wp-content/uploads/2021/11/1636502736844.jpg',
           mailbox: 'liuyuyang1o24@163.com',
+          url: 'http://liuyuyang.net',
           description: '一位正在考研的朋友'
         },
         {
           name: '贰猹的小窝',
           image: 'https://pub-noionion.oss-cn-hangzhou.aliyuncs.com/head.jpg',
           mailbox: '无邮箱',
+          url: 'http://liuyuyang.net',
           description: '用这生命中的每一秒，给自己一个不后悔的未来'
         },
         {
@@ -93,6 +100,7 @@ export default {
           image:
             'https://image.anzhiy.cn/adminuploads/1/2022/09/15/63232b7d91d22.jpg',
           mailbox: '无邮箱',
+          url: 'http://liuyuyang.net',
           description: '生活明朗，万物可爱'
         }
       ],
@@ -133,8 +141,22 @@ export default {
     }
   },
   methods: {
+    // 添加
     add() {
+      this.title = '新增友联'
       this.DialogVisible = true
+    },
+    // 修改
+    emit(index) {
+      this.title = '修改友联'
+      this.DialogVisible = true
+
+      // 数据回显
+      this.link = this.list[index]
+    },
+    // 删除
+    del(index) {
+      this.list.splice(index, 1)
     }
   }
 }
@@ -167,6 +189,11 @@ export default {
       .mailbox {
         font-size: 13px;
         color: #666;
+      }
+
+      a {
+        display: inline-block;
+        height: 200px;
       }
 
       p {
@@ -258,7 +285,7 @@ export default {
 ::v-deep .el-dialog__body {
   padding: 30px 40px 0px 10px;
 }
-::v-deep .el-dialog__headerbtn .el-dialog__close{
+::v-deep .el-dialog__headerbtn .el-dialog__close {
   color: #fff;
 }
 </style>
