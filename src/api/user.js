@@ -1,24 +1,51 @@
 import request from '@/utils/request'
 
-export function login(data) {
+// 登录接口
+export function loginAPI(data) {
   return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
+    url: '/user/login',
+    method: 'POST',
     data
   })
 }
 
-export function getInfo(token) {
+// 获取用户列表
+export function getAllUsersAPI() {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
+    url: '/user/getAll'
   })
 }
 
-export function logout() {
+// 获取用户
+export function getUsersAPI(id) {
   return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: `/user/get/${id}`
+  })
+}
+
+// 添加用户
+export function addUsersAPI(data) {
+  return request({
+    url: '/user/add',
+    method: 'POST',
+    data
+  })
+}
+
+// 删除用户
+export function delUsersAPI(data) {
+  return request({
+    url: '/user/del',
+    method: 'POST',
+    data
+  })
+}
+
+// 修改用户
+export function updateUsersAPI(data) {
+  return request({
+    url: '/user/update',
+    method: 'POST',
+    data
   })
 }

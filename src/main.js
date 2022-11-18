@@ -27,7 +27,15 @@ import '@/styles/index.css'
 import VueMarkdownEditor from '@kangc/v-md-editor'
 import '@kangc/v-md-editor/lib/style/base-editor.css'
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
+import VMdPreviewHtml from '@kangc/v-md-editor/lib/preview-html'
+import '@kangc/v-md-editor/lib/style/preview-html.css'
+
+// 引入使用主题的样式
+// import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
+
+Vue.use(VMdPreviewHtml)
+
 import Prism from 'prismjs'
 VueMarkdownEditor.use(vuepressTheme, {
   Prism

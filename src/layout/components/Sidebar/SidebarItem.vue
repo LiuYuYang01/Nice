@@ -134,12 +134,10 @@ export default {
   left: 20px;
   overflow: auto !important;
   visibility: visible !important;
-  transition: all 0.3s;
 }
 .navItem i {
   font-size: 18px !important;
   margin-right: 15px;
-  transition: all 0.3s;
   color: $menuText;
 }
 

@@ -43,9 +43,9 @@
         </div>
       </el-col>
 
-      <!-- 作者寄语 -->
+      <!-- 项目介绍 -->
       <el-col :span="6">
-        <h3>作者寄语</h3>
+        <h3>项目介绍</h3>
         <p class="message">
           <span style="color:#727cf5">Nice</span> 是一款新一代的CMS管理系统，在未来不仅仅是CMS🎉
           <br>

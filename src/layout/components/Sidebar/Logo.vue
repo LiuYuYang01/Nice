@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'SidebarLogo',
   props: {
@@ -25,7 +26,25 @@ export default {
   data() {
     return {
       title: 'Nice 新一代CMS管理系统',
-      logo: 'https://s1.ax1x.com/2022/10/13/xaBwyq.png'
+      logo: require('@/assets/logo1.png')
+    }
+  },
+  computed: {
+    ...mapGetters(['themeId']),
+    id() {
+      return this.themeId + ''
+    }
+  },
+  watch: {
+    id: {
+      handler(id) {
+        if (id === '1') {
+          this.logo = require('@/assets/logo2.png')
+        } else {
+          this.logo = require('@/assets/logo1.png')
+        }
+      },
+      immediate: true
     }
   }
 }

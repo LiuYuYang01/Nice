@@ -36,7 +36,16 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // 配置跨域
+    proxy: {
+      '/api': {
+        // 跨域请求的地址
+        target: 'http://127.0.0.1:3000/',
+        // 开启跨域
+        changeOrigin: true
+      }
+    }
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

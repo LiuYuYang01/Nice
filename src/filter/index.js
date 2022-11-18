@@ -9,6 +9,7 @@ export function imageNull(value) {
   }
 }
 
+// 处理new Date() 日期
 export function dateFormat(val) {
   if (val === null || val === '') {
     return ''

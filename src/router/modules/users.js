@@ -17,10 +17,10 @@ export default {
       meta: { title: '用户权限', size: '14px', left: '40px' }
     },
     {
-      path: 'web1',
+      path: 'role',
       // component: () => import('@/views/write/ceshi/index'),
-      component: () => import('@/views/setting/webConfig/index'),
-      meta: { title: '用户头衔', size: '14px', left: '40px' }
+      component: () => import('@/views/users/role/index'),
+      meta: { title: '用户角色', size: '14px', left: '40px' }
     }
   ]
 }

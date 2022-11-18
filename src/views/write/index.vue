@@ -84,19 +84,30 @@
               </el-collapse-item>
             </el-collapse>
           </div>
+
+          <!-- 发布文章 -->
+          <div class="publish">
+            <div @click="isOk">发布文章</div>
+            <div>保存为草稿</div>
+          </div>
         </div>
       </el-col>
     </el-row>
+
+    <!-- 预览组件 -->
+    <!-- <v-md-preview-html :html="html" preview-class="vuepress-markdown-body" /> -->
   </div>
 </template>
 
 <script>
+import VueMarkdownEditor, { xss } from '@kangc/v-md-editor'
 export default {
   name: 'Write',
   data() {
     return {
       title: '',
       text: '',
+      html: '',
       cate: [
         {
           id: 1,
@@ -205,6 +216,16 @@ export default {
         { value: 'Angular' },
         { value: 'Nodejs' }
       ]
+    },
+    // 发布文章
+    isOk() {
+      // 将 MarkDown 语法解析为 html
+      const html = xss.process(
+        VueMarkdownEditor.themeConfig.markdownParser.render(this.text)
+      )
+
+      this.html = html
+      console.log(this.html)
     }
   }
 }
@@ -248,6 +269,49 @@ export default {
       line-height: 50px;
       margin: 0 0 5px 20px;
       color: #333;
+    }
+  }
+  // 发布
+  .publish {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    div {
+      width: 48%;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 5px;
+      color: #fff;
+      background-color: #8688f4;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+
+      &:nth-child(1) {
+        background-color: #4fb985;
+      }
+
+      &:nth-child(1):hover{
+        background-color: #7ec6a3;
+      }
+
+      &:nth-child(2):hover{
+        background-color: #a0a2f7;
+      }
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      border-radius: 50px;
+      background-color: #fff;
     }
   }
 }

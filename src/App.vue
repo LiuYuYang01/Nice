@@ -20,20 +20,20 @@
           <p :class="{'selected_p': isSelected === 1}">光</p>
         </div>
 
-        <!-- 暗 -->
-        <div>
-          <div :class="{'dark': true, selected: isSelected === 2}" @click="selected(2)">
-            <img src="./assets/theme/dark.png" alt="">
-          </div>
-          <p :class="{'selected_p': isSelected === 2}">黑暗</p>
-        </div>
-
         <!-- 渐变 -->
         <div>
-          <div :class="{'gradient': true, selected: isSelected === 3}" @click="selected(3)">
+          <div :class="{'gradient': true, selected: isSelected === 2}" @click="selected(2)">
             <img src="./assets/theme/gradient.png" alt="">
           </div>
-          <p :class="{'selected_p': isSelected === 3}">渐变</p>
+          <p :class="{'selected_p': isSelected === 2}">渐变</p>
+        </div>
+
+        <!-- 暗 -->
+        <div>
+          <div :class="{'dark': true, selected: isSelected === 3}" @click="selected(3)">
+            <img src="./assets/theme/dark.png" alt="">
+          </div>
+          <p :class="{'selected_p': isSelected === 3}">黑暗</p>
         </div>
       </div>
 
@@ -72,54 +72,71 @@ export default {
       drawer: false,
       defaultStateImg: require('./assets/theme/TY.png'),
       defaultState: 1,
-      isSelected: 3,
+      isSelected: 2,
       color: '#727cf5'
     }
+  },
+  watch: {
+    isSelected: {
+      handler(id) {
+        // 获取用户点击的那个侧边栏风格id
+        this.$store.commit('main/setThemeId', id)
+
+        // 将用户点击的侧边栏风格id持久化本地存储
+        localStorage.setItem('currentTopic', id)
+
+        const $ = document.getElementsByTagName('body')[0].style
+
+        if (id === 1) {
+          // 光 主题
+          $.setProperty('--menuText', '#6c757d')
+          $.setProperty('--menuActiveText', '#727cf5')
+          $.setProperty('--subMenuActiveText', '#727cf5')
+          $.setProperty('--title', '#333')
+          $.setProperty('--menuBg', '#fff')
+          $.setProperty('--menuHover', 'transparent')
+          $.setProperty('--subMenuBg', 'transparent')
+          $.setProperty('--subMenuHover', 'transparent')
+          $.setProperty('--oneMenuHover', 'transparent')
+          $.setProperty('--boxShadow', '0 1px 4px rgb(0 21 41 / 8%)')
+        } else if (id === 2) {
+          // 渐变 主题
+          $.setProperty('--menuText', '#cedce4')
+          $.setProperty('--menuActiveText', '#fff')
+          $.setProperty('--subMenuActiveText', '#f4f4f5')
+          $.setProperty('--title', '#fff')
+          $.setProperty(
+            '--menuBg',
+            'linear-gradient(135deg, #8f75da 0%, #727cf5 60%)'
+          )
+          $.setProperty('--menuHover', 'transparent')
+          $.setProperty('--subMenuBg', 'transparent')
+          $.setProperty('--subMenuHover', 'transparent')
+          $.setProperty('--oneMenuHover', 'transparent')
+          $.setProperty('--boxShadow', 'none')
+        } else if (id === 3) {
+          // 暗色 主题
+          $.setProperty('--menuText', '#bfcbd9')
+          $.setProperty('--menuActiveText', '#fff')
+          $.setProperty('--subMenuActiveText', '#f4f4f5')
+          $.setProperty('--title', '#fff')
+          $.setProperty('--menuBg', '#313a46')
+          $.setProperty('--menuHover', '#313a46')
+          $.setProperty('--subMenuBg', '#313a46')
+          $.setProperty('--subMenuHover', '#313a46')
+          $.setProperty('--oneMenuHover', '#282e38')
+          $.setProperty('--boxShadow', 'none')
+        }
+      }
+    }
+  },
+  created() {
+    this.isSelected = Number(localStorage.getItem('currentTopic')) || 2
   },
   methods: {
     // 切换侧边栏模板
     selected(id) {
       this.isSelected = id
-
-      const $ = document.getElementsByTagName('body')[0].style
-
-      if (id === 1) {
-        // 光 主题
-        $.setProperty('--menuText', '#6c757d')
-        $.setProperty('--menuActiveText', '#727cf5')
-        $.setProperty('--subMenuActiveText', '#727cf5')
-        $.setProperty('--title', '#333')
-        $.setProperty('--menuBg', '#fff')
-        $.setProperty('--menuHover', 'transparent')
-        $.setProperty('--subMenuBg', 'transparent')
-        $.setProperty('--subMenuHover', 'transparent')
-        $.setProperty('--oneMenuHover', 'transparent')
-        $.setProperty('--boxShadow', '0 1px 4px rgb(0 21 41 / 8%)')
-      } else if (id === 2) {
-        // 暗色 主题
-        $.setProperty('--menuText', '#bfcbd9')
-        $.setProperty('--menuActiveText', '#fff')
-        $.setProperty('--subMenuActiveText', '#f4f4f5')
-        $.setProperty('--title', '#fff')
-        $.setProperty('--menuBg', '#313a46')
-        $.setProperty('--menuHover', '#313a46')
-        $.setProperty('--subMenuBg', '#313a46')
-        $.setProperty('--subMenuHover', '#313a46')
-        $.setProperty('--oneMenuHover', '#282e38')
-        $.setProperty('--boxShadow', 'none')
-      } else if (id === 3) {
-        // 渐变 主题
-        $.setProperty('--menuText', '#cedce4')
-        $.setProperty('--menuActiveText', '#fff')
-        $.setProperty('--subMenuActiveText', '#f4f4f5')
-        $.setProperty('--title', '#fff')
-        $.setProperty('--menuBg', 'linear-gradient(135deg, #8f75da 0%, #727cf5 60%)')
-        $.setProperty('--menuHover', 'transparent')
-        $.setProperty('--subMenuBg', 'transparent')
-        $.setProperty('--subMenuHover', 'transparent')
-        $.setProperty('--oneMenuHover', 'transparent')
-        $.setProperty('--boxShadow', 'none')
-      }
     },
     // 光暗切换
     isLightOrDark() {
@@ -139,7 +156,6 @@ export default {
     }
   }
 }
-
 </script>
 
 <style scoped>

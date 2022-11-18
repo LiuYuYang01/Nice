@@ -97,6 +97,7 @@ export default {
   // 导航栏右侧边框
   // border-right: $borderRight;
   box-shadow: $boxShadow;
+  transition: all 0.3s;
 }
 
 ::v-deep .el-menu {
