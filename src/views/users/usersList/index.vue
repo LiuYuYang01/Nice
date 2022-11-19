@@ -129,7 +129,7 @@ export default {
           {
             min: 6,
             max: 16,
-            message: '用户名长度在 6 到 16 个字符',
+            message: '用户名限制为 6 到 16 个字符',
             trigger: 'blur'
           }
         ],
@@ -137,18 +137,18 @@ export default {
           { required: true, message: '用户密码不能为空', trigger: 'blur' },
           {
             min: 6,
-            max: 16,
-            message: '用户密码长度在 6 到 30 个字符',
+            max: 30,
+            message: '用户密码限制为 6 到 30 个字符',
             trigger: 'blur'
           }
         ],
         nickname: [
           { required: true, message: '用户名称不能为空', trigger: 'blur' },
-          { min: 1, max: 10, message: '用户名称长度在 1 ~ 10 个字符' }
+          { min: 1, max: 10, message: '用户名称限制为 1 ~ 10 个字符' }
         ],
         email: [
           { required: true, message: '用户邮箱不能为空', trigger: 'blur' },
-          { min: 1, max: 50, message: '用户邮箱长度在 1 ~ 50 个字符' }
+          { min: 1, max: 50, message: '用户邮箱限制为 1 ~ 50 个字符' }
         ]
       },
       loading: false,
@@ -252,6 +252,7 @@ export default {
       this.$refs.user.validate(async(isOk) => {
         if (isOk) {
           if (this.title === '新增用户') {
+            console.log(1)
             // 创建时间
             this.usersForm.dateCreated = new Date()
 
@@ -266,6 +267,7 @@ export default {
               this.$message.error(message)
             }
           } else if (this.title === '修改用户') {
+            console.log(2)
             const { message, success } = await updateUsersAPI(this.usersForm)
             if (success) {
               this.$message.success('修改用户成功')

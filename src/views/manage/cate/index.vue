@@ -44,8 +44,8 @@
           <el-input v-model="cateForm.title" />
         </el-form-item>
 
-        <el-form-item label="标识" prop="level">
-          <el-input v-model="cateForm.level" />
+        <el-form-item label="标识" prop="mark">
+          <el-input v-model="cateForm.mark" />
         </el-form-item>
 
         <el-form-item label="级别" prop="pid">
@@ -90,7 +90,7 @@ export default {
       // 分类信息
       cateForm: {
         title: '',
-        level: '',
+        mark: '',
         pid: '',
         description: ''
       },
@@ -100,19 +100,19 @@ export default {
           { required: true, message: '分类名称不能为空', trigger: 'blur' },
           {
             min: 1,
-            max: 15,
-            message: '分类名称长度在 1 到 15 个字符',
+            max: 10,
+            message: '分类名称限制为 1 ~ 10 个字符',
             trigger: 'blur'
           }
         ],
-        level: [
+        mark: [
           { required: true, message: '分类标识不能为空' },
-          { min: 1, max: 10, message: '分类标识长度在 1 ~ 10 个字符' }
+          { min: 1, max: 10, message: '分类标识限制为 1 ~ 10 个字符' }
         ],
         pid: [{ required: true, message: '分类级别不能为空' }],
         description: [
           { required: true, message: '分类描述不能为空' },
-          { min: 1, max: 50, message: '分类描述长度在 1 ~ 50 个字符' }
+          { min: 1, max: 50, message: '分类描述限制为 1 ~ 50 个字符' }
         ]
       },
       // 分类列表
@@ -128,7 +128,7 @@ export default {
       // 重置数据
       this.cateForm = {
         title: '',
-        level: '',
+        mark: '',
         pid: '',
         description: ''
       }

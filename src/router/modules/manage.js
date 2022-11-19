@@ -32,7 +32,7 @@ export default {
     },
     {
       path: 'tag',
-      component: () => import('@/views/manage/tab/index'),
+      component: () => import('@/views/manage/tag/index'),
       meta: { title: '标签管理', size: '14px', left: '40px' }
     },
     {

@@ -16,7 +16,7 @@
           <!-- 分类列表 -->
           <div class="cate">
             <h4 class="title">分类列表</h4>
-            <el-tree :data="cate" show-checkbox node-key="pid" :default-expanded-keys="['1-1']" :default-checked-keys="['1-1']" :props="defaultProps" style="padding:0 20px" @check-change="handleNodeClick" />
+            <el-tree v-loading="cateLoading" :data="cateList" show-checkbox :props="defaultProps" style="padding:0 20px" @check-change="handleNodeClick" />
           </div>
 
           <!-- 时间设置 -->
@@ -34,7 +34,8 @@
             <!-- 添加标签 -->
             <el-row>
               <el-col>
-                <el-autocomplete v-model="tagValut" size="mini" class="inline-input" :fetch-suggestions="querySearch" placeholder="添加标签" @select="tags" />
+                <!-- <el-autocomplete v-model="tagValut" size="mini" class="inline-input" placeholder="添加标签" @keyup.enter.native="addTags" /> -->
+                <el-input v-model="tagValut" size="mini" placeholder="添加标签" @keyup.enter.native="addTags" />
               </el-col>
             </el-row>
 
@@ -100,6 +101,8 @@
 </template>
 
 <script>
+import { getAllCateAPI } from '@/api/cate'
+import { transListToTreeData } from '@/utils'
 import VueMarkdownEditor, { xss } from '@kangc/v-md-editor'
 export default {
   name: 'Write',
@@ -108,55 +111,11 @@ export default {
       title: '',
       text: '',
       html: '',
-      cate: [
-        {
-          id: 1,
-          label: '大前端',
-          children: [
-            {
-              pid: '1-1',
-              label: 'HTML'
-            },
-            {
-              pid: '1-2',
-              label: 'CSS'
-            },
-            {
-              pid: '1-3',
-              label: 'JavaScript'
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: '前端框架',
-          children: [
-            {
-              pid: '2-1',
-              label: 'Vue.js'
-            },
-            {
-              pid: '2-2',
-              label: 'React.js'
-            },
-            {
-              pid: '2-3',
-              label: 'Angular.js'
-            },
-            {
-              pid: '2-4',
-              label: 'Node.js'
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: '生活随笔'
-        }
-      ],
+      cateLoading: false,
+      cateList: [],
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label: 'title'
       },
       timeDate: '',
       options: {
@@ -165,13 +124,7 @@ export default {
         password: false,
         directory: false
       },
-      items: [
-        { type: 'danger', label: '大前端' },
-        { type: 'warning', label: 'JavaScript' },
-        { type: 'success', label: 'Vue' },
-        { type: '', label: 'React' },
-        { type: 'info', label: 'Nodejs' }
-      ],
+      items: [],
       tags: [],
       tagValut: '',
       // el-collapse设置是否默认展开
@@ -180,21 +133,22 @@ export default {
   },
   // 渲染tabs标签列表
   mounted() {
+    this.getAllCateAPI()
     this.restaurants = this.loadAll()
   },
   methods: {
+    async getAllCateAPI() {
+      this.cateLoading = true
+
+      const { data } = await getAllCateAPI()
+      this.cateList = transListToTreeData(data, 0)
+
+      this.cateLoading = false
+      console.log(this.cateList)
+    },
     // 找出被勾选的分类
     handleNodeClick(val) {
       console.log(val)
-    },
-    // 查询标签
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants
-      // 调用 callback 返回建议列表的数据
-      cb(results)
     },
     createFilter(queryString) {
       return (restaurant) => {
@@ -216,6 +170,28 @@ export default {
         { value: 'Angular' },
         { value: 'Nodejs' }
       ]
+    },
+    // 按下回车添加标签
+    addTags() {
+      // 添加标签
+      const add = (type) => {
+        this.items.push({ type, label: this.tagValut })
+        this.tagValut = ''
+      }
+
+      if (this.items.length === 0) {
+        add('')
+      } else if (this.items.length === 1) {
+        add('success')
+      } else if (this.items.length === 2) {
+        add('warning')
+      } else if (this.items.length === 3) {
+        add('danger')
+      } else if (this.items.length === 4) {
+        add('info')
+      } else if (this.items.length === 5) {
+        this.$message.error('最多只能添加5个标签~')
+      }
     },
     // 发布文章
     isOk() {
@@ -293,11 +269,11 @@ export default {
         background-color: #4fb985;
       }
 
-      &:nth-child(1):hover{
+      &:nth-child(1):hover {
         background-color: #7ec6a3;
       }
 
-      &:nth-child(2):hover{
+      &:nth-child(2):hover {
         background-color: #a0a2f7;
       }
     }
