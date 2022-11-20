@@ -252,7 +252,6 @@ export default {
       this.$refs.user.validate(async(isOk) => {
         if (isOk) {
           if (this.title === '新增用户') {
-            console.log(1)
             // 创建时间
             this.usersForm.dateCreated = new Date()
 
@@ -260,7 +259,8 @@ export default {
 
             if (success) {
               this.$message.success(message)
-
+              // 关闭弹框 并 清空数据 && 校验
+              this.close()
               // 获取最新数据
               this.getAllUsersAPI()
             } else {
@@ -271,17 +271,12 @@ export default {
             const { message, success } = await updateUsersAPI(this.usersForm)
             if (success) {
               this.$message.success('修改用户成功')
-
-              // 获取最新数据
+              this.close()
               this.getAllUsersAPI()
             } else {
-              console.log(message)
               this.$message.error(message)
             }
           }
-
-          // 关闭弹框 并 清空数据 && 校验
-          this.close()
         }
       })
     },

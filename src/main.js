@@ -18,6 +18,8 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import { imageError } from '@/directives/index'
+
 // 引入iconfont字体图标
 import '@/icons/font/iconfont.css'
 
@@ -77,6 +79,9 @@ import { imageNull, dateFormat } from '@/filter/index'
 // 自定义过滤器，有头像就显示头像，没有头像就显示默认头像
 Vue.filter('imageNull', imageNull)
 Vue.filter('dateFormat', dateFormat)
+
+// 自定义事件
+Vue.directive('image', imageError)
 
 Vue.config.productionTip = false
 

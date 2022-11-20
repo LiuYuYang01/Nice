@@ -218,7 +218,8 @@ export default {
 
         if (success) {
           this.$message.success('新增分类成功')
-
+          // 关闭弹框 重置数据
+          this.close()
           // 获取最新数据
           this.getAllCateAPI()
         } else {
@@ -229,16 +230,14 @@ export default {
         const { message, success } = await updateCateAPI(this.cateForm)
         if (success) {
           this.$message.success('编辑分类成功')
-
+          // 关闭弹框 重置数据
+          this.close()
           // 获取最新数据
           this.getAllCateAPI()
         } else {
           this.$message.error(message)
         }
       }
-
-      // 关闭弹框 重置数据
-      this.close()
     }
   }
 }

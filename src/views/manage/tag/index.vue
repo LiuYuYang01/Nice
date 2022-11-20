@@ -4,9 +4,9 @@
     <el-row type="flex" justify="space-between">
       <el-col :span="9">
         <!-- 添加标签 -->
-        <el-form ref="tag" :model="tagForm" :rules="tagVerify" label-width="80px" style="margin-top:15px">
-          <el-form-item label="标签" prop="name">
-            <el-input v-model="tagForm.name" />
+        <el-form ref="tag" v-loading="tag_loading" :model="tagForm" :rules="tagVerify" label-width="80px" style="margin-top:15px">
+          <el-form-item label="标签" prop="title">
+            <el-input v-model="tagForm.title" />
           </el-form-item>
 
           <el-form-item label="标识" prop="mark">
@@ -14,90 +14,79 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" style="width: 100%" @click="onSubmit">提交</el-button>
+            <el-button type="primary" style="width: 100%" @click="btnOk">{{ operate }}</el-button>
           </el-form-item>
         </el-form>
 
-        <el-table :data="tableData" style="width: 100%;margin: 50px 0 0 30px;">
+        <el-table :data="tagList" style="width: 100%; margin: 50px 0 0 30px;">
           <el-table-column label="ID" width="50" prop="id" />
           <el-table-column label="标签" width="100" prop="title" align="center" />
           <el-table-column label="标识" width="100" prop="mark" align="center" />
           <el-table-column label="操作" align="center">
             <template slot-scope="{row}">
-              <el-button size="mini" @click="emit(row.id)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="del(row.id)">删除</el-button>
+              <el-button size="mini" @click="updateTagAPI(row.id)">编辑</el-button>
+              <el-button size="mini" type="danger" @click="delTagAPI(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
+
+        <!-- 分页 -->
+        <el-row type="flex" justify="center" style="margin-top:20px">
+          <el-pagination small layout="prev, pager, next" :total="50" />
+        </el-row>
       </el-col>
 
       <!-- 标签列表 -->
       <el-col :span="12">
-        <div id="tagsList" ref="tagsList">
-          <a v-for="(item,index) in arr" :key="index" href="#" :title="item.title">{{ item.title }}</a>
-        </div>
+        <tags3D v-if="tagData.length" :tag-data="tagData" />
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+import {
+  addTagAPI,
+  delTagAPI,
+  updateTagAPI,
+  getTagAPI,
+  getAllTagAPI
+} from '@/api/tag'
 export default {
   data() {
     return {
-      // 轮播图设置
+      operate: '添加',
       tagForm: {
-        name: '',
+        title: '',
         mark: ''
       },
       tagVerify: {
-        name: [
+        title: [
           { required: true, message: '标签名称不能为空', trigger: 'blur' },
-          { min: 1, max: 10, message: '标签名称限制为1 ~ 10 个字符', trigger: 'blur' }
+          {
+            min: 1,
+            max: 10,
+            message: '标签名称限制为1 ~ 10 个字符',
+            trigger: 'blur'
+          }
         ],
         mark: [
           { required: true, message: '标签标识不能为空', trigger: 'blur' },
-          { min: 1, max: 10, message: '标签标识限制为1 ~ 10 个字符', trigger: 'blur' }
+          {
+            min: 1,
+            max: 10,
+            message: '标签标识限制为1 ~ 10 个字符',
+            trigger: 'blur'
+          }
         ]
       },
-      arr: [
-        { title: '大前端' },
-        { title: '大前端' },
-        { title: '大前端' },
-        { title: '大前端' }
-      ],
-      tableData: [
-        {
-          id: 1,
-          title: '大前端',
-          mark: 'dqd'
-        },
-        {
-          id: 1,
-          title: '大前端',
-          mark: 'dqd'
-        },
-        {
-          id: 1,
-          title: '大前端',
-          mark: 'dqd'
-        },
-        {
-          id: 1,
-          title: '大前端',
-          mark: 'dqd'
-        },
-        {
-          id: 1,
-          title: '大前端',
-          mark: 'dqd'
-        }
-      ]
+      tagData: [],
+      tagList: [],
+      tag_loading: false
     }
   },
   mounted() {
-    const { tagsList } = require('./tags')
-    tagsList(this.$refs.tagsList)
+    this.getAllTagAPI()
   },
   methods: {
     // 表单提交
@@ -105,12 +94,86 @@ export default {
       console.log('submit!')
     },
     // 编辑标签
-    emit(id) {
-      console.log(id)
+    async updateTagAPI(id) {
+      this.tag_loading = true
+
+      this.operate = '编辑'
+
+      const { data, message, success } = await getTagAPI(id)
+      if (success) {
+        this.tagForm = data
+      } else {
+        this.$message.error(message)
+      }
+
+      this.tag_loading = false
     },
     // 删除标签
-    del(id) {
-      console.log(id)
+    async delTagAPI(id) {
+      const { message, success } = await delTagAPI({ id })
+
+      if (success) {
+        // 获取最新数据
+        this.getAllTagAPI()
+        this.$message.success('删除标签成功')
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 获取分类列表
+    async getAllTagAPI() {
+      this.tag_loading = true
+
+      const { data, message, success } = await getAllTagAPI()
+
+      if (success) {
+        this.tagList = data
+        this.tagData = data
+      } else {
+        this.$message.error(message)
+      }
+
+      this.tag_loading = false
+    },
+    // 提交
+    async btnOk() {
+      if (this.operate === '添加') {
+        const { message, success } = await addTagAPI(this.tagForm)
+        if (success) {
+          // 编辑完成后清空内容
+          this.tagForm = {
+            title: '',
+            mark: ''
+          }
+
+          // 获取最新数据
+          this.getAllTagAPI()
+          this.$message.success('新增标签成功')
+        } else {
+          this.$message.error(message)
+        }
+
+        this.$refs.tag.resetFields()
+      } else if (this.operate === '编辑') {
+        const { message, success } = await updateTagAPI(this.tagForm)
+        if (success) {
+          this.tagForm = {
+            title: '',
+            mark: ''
+          }
+
+          // 还原为添加状态
+          this.operate = '添加'
+
+          this.getAllTagAPI()
+
+          this.$message.success('修改标签成功')
+        } else {
+          this.$message.error(message)
+        }
+
+        this.$refs.tag.resetFields()
+      }
     }
   }
 }
@@ -125,29 +188,5 @@ export default {
 .title {
   margin: 0;
   margin-bottom: 20px;
-}
-
-// 3D标签栏
-#tagsList {
-  position: relative;
-  top: 45%;
-  width: 100%;
-  margin: 0 auto;
-
-  a {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    font-family: Microsoft YaHei;
-    color: #727cf5;
-    font-weight: bold;
-    text-decoration: none;
-    padding: 3px 6px;
-
-    &:hover {
-      color: #727cf5;
-      letter-spacing: 2px;
-    }
-  }
 }
 </style>

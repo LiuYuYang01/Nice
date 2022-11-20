@@ -1,19 +1,5 @@
 import request from '@/utils/request'
 
-// 获取全部分类
-export function getAllCateAPI() {
-  return request({
-    url: '/cate/getAll'
-  })
-}
-
-// 获取分类
-export function getCateAPI(id) {
-  return request({
-    url: `/cate/get/${id}`
-  })
-}
-
 // 新增分类
 export function addCateAPI(data) {
   return request({
@@ -38,5 +24,19 @@ export function updateCateAPI(data) {
     url: '/cate/update',
     method: 'POST',
     data
+  })
+}
+
+// 获取分类
+export function getCateAPI(id) {
+  return request({
+    url: `/cate/get/${id}`
+  })
+}
+
+// 获取全部分类
+export function getAllCateAPI() {
+  return request({
+    url: '/cate/getAll'
   })
 }

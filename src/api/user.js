@@ -9,20 +9,6 @@ export function loginAPI(data) {
   })
 }
 
-// 获取用户列表
-export function getAllUsersAPI() {
-  return request({
-    url: '/user/getAll'
-  })
-}
-
-// 获取用户
-export function getUsersAPI(id) {
-  return request({
-    url: `/user/get/${id}`
-  })
-}
-
 // 添加用户
 export function addUsersAPI(data) {
   return request({
@@ -47,5 +33,19 @@ export function updateUsersAPI(data) {
     url: '/user/update',
     method: 'POST',
     data
+  })
+}
+
+// 获取用户
+export function getUsersAPI(id) {
+  return request({
+    url: `/user/get/${id}`
+  })
+}
+
+// 获取用户列表
+export function getAllUsersAPI() {
+  return request({
+    url: '/user/getAll'
   })
 }

@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       title: 'Nice 新一代CMS管理系统',
-      logo: require('@/assets/logo1.png')
+      logo: require('@/assets/Nice/logo1.png')
     }
   },
   computed: {
@@ -39,9 +39,9 @@ export default {
     id: {
       handler(id) {
         if (id === '1') {
-          this.logo = require('@/assets/logo2.png')
+          this.logo = require('@/assets/Nice/logo2.png')
         } else {
-          this.logo = require('@/assets/logo1.png')
+          this.logo = require('@/assets/Nice/logo1.png')
         }
       },
       immediate: true

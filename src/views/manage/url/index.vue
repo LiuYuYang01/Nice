@@ -1,19 +1,19 @@
 <template>
   <div class="content">
     <div class="list">
-      <div v-for="(item,index) in list" :key="index" class="item">
+      <div v-for="item in linkList" :key="item.id" class="item">
         <a :href="item.url" target="_blank">
-          <img :src="item.image" alt="">
-          <h4 style="color: #444">{{ item.name }}</h4>
-          <span class="mailbox">{{ item.mailbox }}</span>
+          <img v-image="require('@/assets/Nice/icon2.jpg')" :src="item.icon" alt="">
+          <h4>{{ item.title }}</h4>
+          <span class="mailbox">{{ item.email }}</span>
           <p>{{ item.description }}</p>
-
-          <!-- 操作 -->
-          <div class="operate">
-            <i class="el-icon-edit-outline" @click="emit(index)" />
-            <i class="el-icon-delete" @click="del(index)" />
-          </div>
         </a>
+
+        <!-- 操作 -->
+        <div class="operate">
+          <i class="el-icon-edit-outline" @click="updateLinkAPI(item.id)" />
+          <i class="el-icon-delete" @click="delLinkAPI(item.id)" />
+        </div>
       </div>
 
       <!-- 添加友联 -->
@@ -23,99 +23,57 @@
     </div>
 
     <!-- 对话框 -->
-    <el-dialog :title="title" :visible.sync="DialogVisible" width="30%">
-      <el-form ref="link" :model="link" :rules="linkVerify" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="link.name" />
+    <el-dialog :title="title" :visible.sync="DialogVisible" width="30%" @close="close">
+      <el-form ref="link" v-loading="loading" :model="linkForm" :rules="linkVerify" label-width="80px">
+        <el-form-item label="名称" prop="title">
+          <el-input v-model="linkForm.title" />
         </el-form-item>
 
         <el-form-item label="链接" prop="url">
-          <el-input v-model="link.url" />
+          <el-input v-model="linkForm.url" />
         </el-form-item>
 
-        <el-form-item label="邮箱" prop="mailbox">
-          <el-input v-model="link.mailbox" />
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="linkForm.email" />
         </el-form-item>
 
-        <el-form-item label="图标" prop="image">
-          <el-input v-model="link.image" />
+        <el-form-item label="图标" prop="icon">
+          <el-input v-model="linkForm.icon" />
         </el-form-item>
 
         <el-form-item label="描述" prop="description">
-          <el-input v-model="link.description" />
+          <el-input v-model="linkForm.description" />
         </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button>取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button @click="close">取 消</el-button>
+        <el-button type="primary" @click="btnOk">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { addLinkAPI, delLinkAPI, updateLinkAPI, getLinkAPI, getAllLinkAPI } from '@/api/link'
 export default {
   data() {
     return {
-      list: [
-        {
-          name: '全栈梦想家',
-          image: 'http://q1.qlogo.cn/g?b=qq&nk=3311118881&s=640',
-          mailbox: 'liuyuyang1o24@163.com',
-          url: 'http://liuyuyang.net',
-          description: '记录一个架构师的诞生'
-        },
-        {
-          name: '小孙同学',
-          image: 'https://sunguoqi.com/images/avatar.jpg',
-          mailbox: '无邮箱',
-          url: 'http://liuyuyang.net',
-          description: '一个理性的浪漫主义者！'
-        },
-        {
-          name: 'Mlldxe s Blog',
-          image: 'https://yy.liveout.cn/photo/mlldxe.jpg',
-          mailbox: '无邮箱',
-          url: 'http://liuyuyang.net',
-          description: '一个不学无术的伪程序猿'
-        },
-        {
-          name: 'Grape',
-          image:
-            'http://vgrape.com/wp-content/uploads/2021/11/1636502736844.jpg',
-          mailbox: 'liuyuyang1o24@163.com',
-          url: 'http://liuyuyang.net',
-          description: '一位正在考研的朋友'
-        },
-        {
-          name: '贰猹的小窝',
-          image: 'https://pub-noionion.oss-cn-hangzhou.aliyuncs.com/head.jpg',
-          mailbox: '无邮箱',
-          url: 'http://liuyuyang.net',
-          description: '用这生命中的每一秒，给自己一个不后悔的未来'
-        },
-        {
-          name: '安知鱼 `Blog',
-          image:
-            'https://image.anzhiy.cn/adminuploads/1/2022/09/15/63232b7d91d22.jpg',
-          mailbox: '无邮箱',
-          url: 'http://liuyuyang.net',
-          description: '生活明朗，万物可爱'
-        }
-      ],
+      loading: false,
+      linkList: [],
       title: '新增友联',
       DialogVisible: false,
       // 友联
-      link: {
-        name: '',
-        mark: '',
-        level: '',
+      linkForm: {
+        title: '',
+        url: '',
+        email: '',
+        icon: '',
         description: ''
       },
       // 友联校验
       linkVerify: {
-        name: [
+        title: [
           { required: true, message: '友联名称不能为空', trigger: 'blur' },
           {
             min: 1,
@@ -128,11 +86,11 @@ export default {
           { required: true, message: '友联链接不能为空' },
           { min: 1, max: 50, message: '友联链接长度在 1 ~ 50 个字符' }
         ],
-        mailbox: [
+        email: [
           { required: true, message: '友联邮箱不能为空' },
           { min: 1, max: 50, message: '友联邮箱长度在 1 ~ 50 个字符' }
         ],
-        image: [{ required: true, message: '友联图标不能为空' }],
+        icon: [{ required: true, message: '友联图标不能为空' }],
         description: [
           { required: true, message: '友联描述不能为空' },
           { min: 1, max: 50, message: '友联描述长度在 1 ~ 50 个字符' }
@@ -140,23 +98,94 @@ export default {
       }
     }
   },
+  created() {
+    this.getAllLinkAPI()
+  },
   methods: {
+    // 取消
+    close() {
+      // 重置数据
+      this.linkForm = {
+        title: '',
+        url: '',
+        email: '',
+        icon: '',
+        description: ''
+      }
+
+      // 重置检验
+      this.$refs.link.resetFields()
+
+      // 关闭弹出框
+      this.DialogVisible = false
+    },
+    // 获取友联列表
+    async getAllLinkAPI() {
+      const { data, message, success } = await getAllLinkAPI()
+      if (success) {
+        this.linkList = data
+      } else {
+        this.$message.error(message)
+      }
+    },
     // 添加
     add() {
       this.title = '新增友联'
       this.DialogVisible = true
     },
-    // 修改
-    emit(index) {
-      this.title = '修改友联'
+    // 修改友联
+    async updateLinkAPI(id) {
+      this.loading = true
+
+      this.title = '编辑友联'
       this.DialogVisible = true
 
-      // 数据回显
-      this.link = this.list[index]
+      const { data, message, success } = await getLinkAPI(id)
+      if (success) {
+        this.linkForm = data
+      } else {
+        this.$message.error(message)
+      }
+
+      this.loading = false
     },
-    // 删除
-    del(index) {
-      this.list.splice(index, 1)
+    // 删除友联
+    async delLinkAPI(id) {
+      const { message, success } = await delLinkAPI({ id })
+
+      if (success) {
+        // 获取最新数据
+        this.getAllLinkAPI()
+        this.$message.success('删除友联成功')
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 提交
+    async btnOk() {
+      // 新增友联
+      if (this.title === '新增友联') {
+        const { message, success } = await addLinkAPI(this.linkForm)
+        if (success) {
+          this.$message.success('新增友联成功')
+          // 初始化
+          this.close()
+          // 获取最新数据
+          this.getAllLinkAPI()
+        } else {
+          this.$message.error(message)
+        }
+      } else if (this.title === '编辑友联') {
+        // 编辑友联
+        const { message, success } = await updateLinkAPI(this.linkForm)
+        if (success) {
+          this.$message.success('编辑友联成功')
+          this.close()
+          this.getAllLinkAPI()
+        } else {
+          this.$message.error(message)
+        }
+      }
     }
   }
 }
@@ -211,6 +240,8 @@ export default {
 
       h4 {
         margin: 10px 0;
+        color: #444;
+        transition: all 0.3s;
       }
 
       img {
@@ -238,6 +269,10 @@ export default {
             color: #f56c6c;
           }
         }
+      }
+
+      &:hover h4 {
+        color: #727cf5;
       }
 
       &::after {
