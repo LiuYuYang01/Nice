@@ -65,9 +65,9 @@
           <div class="head">
             <div class="title">任务栏</div>
             <div class="count">
-              <span>已完成：<b style="color:#49b984">3</b></span>
-              <span>剩余：<b style="color:#F56C6C">7</b></span>
-              <span>总：<b style="color:#727cf5">10</b></span>
+              <span>已完成：<b style="color:#49b984">{{ finish_ok }}</b></span>
+              <span>剩余：<b style="color:#F56C6C">{{ finish_no }}</b></span>
+              <span>总：<b style="color:#727cf5">{{ count }}</b></span>
             </div>
           </div>
 
@@ -76,7 +76,7 @@
             <el-checkbox-group v-model="selectList">
               <el-row class="box">
                 <el-col v-for="item in toDoList" :key="item.id">
-                  <el-checkbox :label="item.id" :checked="item.state === 1 ? true : false">
+                  <el-checkbox :label="item.id" :checked="item.state === 1 ? true : false" @change="checked=>checkRow(checked, item)">
                     <span slot-scope :class="{is_select: item.state}">{{ item.label }}</span>
                   </el-checkbox>
                   <i class="el-icon-close remove" />
@@ -164,12 +164,47 @@ export default {
       ],
       // 被选中的
       selectList: [],
-      addTask: ''
+      addTask: '',
+      finish_ok: 0, // 已完成
+      finish_no: 0, // 未完成
+      count: 0 // 总任务数量
+    }
+  },
+  watch: {
+    // 统计任务
+    toDoList: {
+      handler() {
+        const finish_ok = []
+        this.toDoList.filter((item) => {
+          // 0代表未完成  1代表已完成
+          if (item.state) {
+            finish_ok.push(item.state)
+          }
+        })
+
+        // 总数
+        this.count = this.toDoList.length
+        // 已完成
+        this.finish_ok = finish_ok.length
+        // 未完成
+        this.finish_no = this.count - finish_ok.length
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
     add() {
       console.log(this.selectList)
+    },
+    // 点击勾选按钮 完成当前任务
+    checkRow(val, { id }) {
+      const item = this.toDoList.find((item) => item.id === id)
+      if (item.state) {
+        item.state = 0
+      } else {
+        item.state = 1
+      }
     }
   }
 }
@@ -195,7 +230,13 @@ export default {
     .text-gradient {
       display: inline-block;
       color: #8f75da;
-      background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(#8f75da), to(#727cf5));
+      background-image: -webkit-gradient(
+        linear,
+        0 0,
+        0 bottom,
+        from(#8f75da),
+        to(#727cf5)
+      );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
