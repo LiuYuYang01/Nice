@@ -226,20 +226,6 @@ export default {
       margin: 0;
       margin-bottom: 30px;
     }
-
-    .text-gradient {
-      display: inline-block;
-      color: #8f75da;
-      background-image: -webkit-gradient(
-        linear,
-        0 0,
-        0 bottom,
-        from(#8f75da),
-        to(#727cf5)
-      );
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
   }
 
   // 可视化图表

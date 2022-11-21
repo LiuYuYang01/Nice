@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <h3 class="title">轮播图管理</h3>
+    <h3 class="title text-gradient">轮播图管理</h3>
     <el-row>
       <el-col :span="9">
         <!-- 添加轮播图 -->

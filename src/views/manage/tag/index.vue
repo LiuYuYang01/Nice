@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <h3 class="title">标签管理</h3>
+    <h3 class="title text-gradient">标签管理</h3>
     <el-row type="flex" justify="space-between">
       <el-col :span="9">
         <!-- 添加标签 -->

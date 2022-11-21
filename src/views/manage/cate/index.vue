@@ -2,7 +2,7 @@
   <div class="content">
     <el-row style="margin-bottom: 20px" type="flex" justify="space-between" align="middle">
       <el-col :span="12">
-        <h3 style="margin:0">分类管理</h3>
+        <h3 style="margin:0" class="text-gradient">分类管理</h3>
       </el-col>
 
       <el-col :span="12" style="text-align: end; margin-right: 90px">

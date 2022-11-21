@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <h3>发布笔记</h3>
+    <h3 class="text-gradient">发布笔记</h3>
 
     <!-- 编辑区 -->
     <el-row type="flex" justify="space-between">

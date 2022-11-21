@@ -39,6 +39,19 @@ body::-webkit-scrollbar-thumb {
     right: 50px;
 }
 
+/* 文本渐变 */
+.text-gradient {
+    display: inline-block;
+    color: #8f75da;
+    background-image: -webkit-gradient(linear,
+            0 0,
+            0 bottom,
+            from(#8f75da),
+            to(#727cf5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 /* 后台设置按钮 */
 .DIY {
     position: fixed;
