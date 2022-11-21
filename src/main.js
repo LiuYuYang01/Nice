@@ -55,6 +55,10 @@ Vue.use(component)
 Vue.use(VueMarkdownEditor)
 // v-md-editor 结束代码
 
+// ECharts 可视化适配
+import ElementResizeDetectorMaker from 'element-resize-detector'
+Vue.prototype.$erd = ElementResizeDetectorMaker()
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

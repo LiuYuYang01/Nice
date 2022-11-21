@@ -85,6 +85,13 @@ export default {
     }
 
     option && myChart.setOption(option)
+
+    // ECharts 图表适配
+    this.$erd.listenTo(this.$refs.visits, () => {
+      this.$nextTick(() => {
+        myChart.resize()
+      })
+    })
   }
 }
 </script>

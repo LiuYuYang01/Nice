@@ -61,6 +61,17 @@ export default {
     }
 
     option && myChart.setOption(option)
+
+    // ECharts 图表适配
+    this.$erd.listenTo(this.$refs.user, () => {
+      this.$nextTick(() => {
+        myChart.resize()
+      })
+    })
+
+    // window.addEventListener('resize', function() {
+    //   myChart.resize()
+    // })
   }
 }
 </script>

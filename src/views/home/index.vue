@@ -1,6 +1,8 @@
 <template>
   <div class="content">
-    <h2 class="title">Hello! 新一代CMS管理系统 </h2>
+    <el-card class="box-card welcome">
+      <h2 class="title text-gradient">Hello! 新一代CMS管理系统 </h2>
+    </el-card>
 
     <!-- 可视化图表 -->
     <el-row class="chart" type="flex" justify="space-between">
@@ -53,6 +55,47 @@
         </p>
       </el-col>
     </el-row>
+
+    <!-- 功能栏 -->
+    <el-row class="function" justify="space-between" style="margin-top:20px">
+      <!-- 任务 -->
+      <el-col :span="6">
+        <div class="toDo">
+          <!-- 头部 -->
+          <div class="head">
+            <div class="title">任务栏</div>
+            <div class="count">
+              <span>已完成：<b style="color:#49b984">3</b></span>
+              <span>剩余：<b style="color:#F56C6C">7</b></span>
+              <span>总：<b style="color:#727cf5">10</b></span>
+            </div>
+          </div>
+
+          <!-- 主体内容 -->
+          <div class="list">
+            <el-checkbox-group v-model="selectList">
+              <el-row class="box">
+                <el-col v-for="item in toDoList" :key="item.id">
+                  <el-checkbox :label="item.id" :checked="item.state === 1 ? true : false">
+                    <span slot-scope :class="{is_select: item.state}">{{ item.label }}</span>
+                  </el-checkbox>
+                  <i class="el-icon-close remove" />
+                </el-col>
+              </el-row>
+            </el-checkbox-group>
+          </div>
+
+          <div class="add">
+            <el-input v-model="addTask" class="addTask" placeholder="添加任务~" @keyup.enter.native="add" />
+            <el-button type="primary" icon="el-icon-check" class="addBtn" @click="add" />
+          </div>
+        </div>
+      </el-col>
+
+      <el-col :span="8">2</el-col>
+
+      <el-col :span="8">3</el-col>
+    </el-row>
   </div>
 </template>
 
@@ -64,33 +107,105 @@ export default {
   components: {
     visits,
     user
+  },
+  data() {
+    return {
+      toDoList: [
+        {
+          id: 1,
+          label: '系统在线更新~',
+          state: 0
+        },
+        {
+          id: 2,
+          label: '插件、主题应用中心',
+          state: 1
+        },
+        {
+          id: 3,
+          label: '素材库功能',
+          state: 0
+        },
+        {
+          id: 4,
+          label: '测试？？',
+          state: 0
+        },
+        {
+          id: 5,
+          label: '创建组件页面',
+          state: 1
+        },
+        {
+          id: 6,
+          label: '创建新版本',
+          state: 0
+        },
+        {
+          id: 7,
+          label: '呵呵！！看起来很酷',
+          state: 0
+        },
+        {
+          id: 8,
+          label: '构建基于js的应用程序',
+          state: 0
+        },
+        {
+          id: 9,
+          label: '设计单页主题',
+          state: 0
+        },
+        {
+          id: 10,
+          label: '测试',
+          state: 0
+        }
+      ],
+      // 被选中的
+      selectList: [],
+      addTask: ''
+    }
+  },
+  methods: {
+    add() {
+      console.log(this.selectList)
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .content {
-  position: absolute;
+  position: static;
   width: 100%;
-  height: 100%;
   padding: 50px;
   padding-top: 40px;
   background-color: #f9f9f9;
 
-  .title {
-    margin: 0;
-    margin-bottom: 30px;
+  .welcome {
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+
+    > .title {
+      margin: 0;
+      margin-bottom: 30px;
+    }
+
+    .text-gradient {
+      display: inline-block;
+      color: #8f75da;
+      background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(#8f75da), to(#727cf5));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
   }
 
-  .message {
-    margin: 50px 30px;
-    line-height: 30px;
-    font-size: 15px;
-  }
-
+  // 可视化图表
   .chart {
     h3 {
       margin: 0;
+      color: #333;
     }
     .el-col {
       width: 24.1%;
@@ -138,7 +253,145 @@ export default {
           }
         }
       }
+
+      .message {
+        margin: 50px 30px;
+        line-height: 30px;
+        font-size: 15px;
+      }
     }
   }
+
+  // 功能
+  .function {
+    .el-col-6 {
+      width: 24%;
+      border-radius: 3px;
+      box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+    }
+
+    // 任务
+    .toDo {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      padding: 30px;
+      border-radius: 3px;
+      background-color: #fff;
+
+      // 头部
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+
+        // 标题
+        .title {
+          color: #333;
+          font-weight: 900;
+          font-size: 20px;
+        }
+
+        // 统计
+        .count {
+          span {
+            margin-left: 10px;
+            color: #666;
+            font-size: 12px;
+          }
+
+          b {
+            font-size: 14px;
+          }
+        }
+      }
+
+      // 主体内容
+      .list {
+        .box {
+          overflow: overlay;
+          height: 240px;
+
+          .el-col {
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px;
+            line-height: 40px;
+
+            &:hover .remove {
+              right: 20px;
+            }
+
+            // 删除
+            .remove {
+              position: absolute;
+              right: -60px;
+              width: 15px;
+              height: 14px;
+              line-height: 15px;
+              border-radius: 5px;
+              color: #fff;
+              background-color: #f56c6c;
+              font-size: 12px;
+              text-align: center;
+              transition: all 0.3s;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+
+      // 添加
+      .add {
+        position: absolute;
+        bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 60px;
+
+        // 添加按钮
+        .addBtn {
+          width: 50px;
+          height: 40px;
+          padding: 12px;
+          padding-right: 6px;
+        }
+      }
+    }
+  }
+}
+// 任务名称
+::v-deep .function .toDo .el-col .el-checkbox .el-checkbox__label {
+  color: #333;
+  padding-left: 7px;
+}
+
+// 选中任务的样式
+::v-deep .function .toDo .el-col .is_select {
+  color: #666;
+  text-decoration: line-through;
+}
+
+// 表格滚动条
+::v-deep .function .toDo .box::-webkit-scrollbar {
+  width: 6px; // 横向滚动条
+  height: 6px; // 纵向滚动条 必写
+}
+// 滚动条的滑块
+::v-deep .function .toDo .box::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+  border-radius: 3px;
+}
+
+// 输入框
+::v-deep .function .toDo .addTask .el-input__inner {
+  margin-left: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 </style>
