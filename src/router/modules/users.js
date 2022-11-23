@@ -13,7 +13,7 @@ export default {
     {
       path: 'web',
       // component: () => import('@/views/write/ceshi/index'),
-      component: () => import('@/views/setting/webConfig/index'),
+      component: () => import('@/views/setting/web/index'),
       meta: { title: '用户权限', size: '14px', left: '40px' }
     },
     {

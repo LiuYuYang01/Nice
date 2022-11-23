@@ -7,7 +7,7 @@ export default {
     {
       path: '',
       component: () => import('@/views/material/index'),
-      meta: { title: '资源', icon: 'icon-Union-1' }
+      meta: { title: '资源库', icon: 'icon-Union-1' }
     }
   ]
 }

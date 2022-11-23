@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      title: 'Nice 新一代CMS管理系统',
+      title: 'Nice',
       logo: require('@/assets/Nice/logo1.png')
     }
   },
@@ -87,7 +87,7 @@ export default {
       color: $title;
       font-weight: 600;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 30px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }

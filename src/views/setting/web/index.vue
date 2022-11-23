@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="8">
             <el-form ref="form" :model="siteConfig" label-width="80px" style="margin-top:15px">
-              <el-form-item label="站点域名">
+              <el-form-item label="域名">
                 <el-input v-model="siteConfig.url" disabled />
               </el-form-item>
 
@@ -13,7 +13,7 @@
                 <el-input v-model="siteConfig.logo" />
               </el-form-item>
 
-              <el-form-item label="站点标题">
+              <el-form-item label="标题">
                 <el-input v-model="siteConfig.title" />
               </el-form-item>
 
@@ -25,7 +25,7 @@
                 <el-input v-model="siteConfig.keyword" />
               </el-form-item>
 
-              <el-form-item label="站点描述">
+              <el-form-item label="描述">
                 <el-input v-model="siteConfig.description" type="textarea" placeholder="请输入站点描述内容" maxlength="50" show-word-limit />
               </el-form-item>
 

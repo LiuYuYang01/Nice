@@ -22,7 +22,7 @@ import { imageError } from '@/directives/index'
 
 // 引入iconfont字体图标
 import '@/icons/font/iconfont.css'
-
+import '@/icons/font/iconfont.js'
 import '@/styles/index.css'
 
 // 引入v-md-editor 开始代码

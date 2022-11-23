@@ -6,6 +6,90 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1973157",
+      "name": "图片",
+      "font_class": "picture__easy",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "3816381",
+      "name": "视频",
+      "font_class": "tubiaozhizuomoban-",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "3868284",
+      "name": "仪表盘",
+      "font_class": "yibiaopan",
+      "unicode": "eb67",
+      "unicode_decimal": 60263
+    },
+    {
+      "icon_id": "6544524",
+      "name": "图片",
+      "font_class": "tupian",
+      "unicode": "e701",
+      "unicode_decimal": 59137
+    },
+    {
+      "icon_id": "6992560",
+      "name": "仪表盘",
+      "font_class": "yibiaopan1",
+      "unicode": "e834",
+      "unicode_decimal": 59444
+    },
+    {
+      "icon_id": "7450637",
+      "name": "视频2",
+      "font_class": "shipin",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "12553259",
+      "name": "1仪表盘",
+      "font_class": "yibiaopan2",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "17541046",
+      "name": "视频",
+      "font_class": "shipin1",
+      "unicode": "eddf",
+      "unicode_decimal": 60895
+    },
+    {
+      "icon_id": "17541047",
+      "name": "图片",
+      "font_class": "tupian1",
+      "unicode": "ede0",
+      "unicode_decimal": 60896
+    },
+    {
+      "icon_id": "21721551",
+      "name": "文件类型-标准图-文件夹",
+      "font_class": "wenjianleixing-biaozhuntu-wenjianjia",
+      "unicode": "e6a5",
+      "unicode_decimal": 59045
+    },
+    {
+      "icon_id": "21721572",
+      "name": "文件类型-缩略图-文件夹",
+      "font_class": "wenjianleixing-suolvetu-wenjianjia",
+      "unicode": "e6a9",
+      "unicode_decimal": 59049
+    },
+    {
+      "icon_id": "24111668",
+      "name": "视频",
+      "font_class": "shipin2",
+      "unicode": "fb3c",
+      "unicode_decimal": 64316
+    },
+    {
       "icon_id": "3868258",
       "name": "场景管理",
       "font_class": "changjingguanli",
@@ -13,25 +97,11 @@
       "unicode_decimal": 60257
     },
     {
-      "icon_id": "3868272",
-      "name": "节点管理",
-      "font_class": "jiedianguanli",
-      "unicode": "eb64",
-      "unicode_decimal": 60260
-    },
-    {
       "icon_id": "4347582",
       "name": "icon_应用管理",
       "font_class": "icon_yingyongguanli",
       "unicode": "eb8f",
       "unicode_decimal": 60303
-    },
-    {
-      "icon_id": "5401579",
-      "name": "分组管理",
-      "font_class": "fenzuguanli",
-      "unicode": "ec23",
-      "unicode_decimal": 60451
     },
     {
       "icon_id": "201646",
@@ -46,13 +116,6 @@
       "font_class": "xiezi",
       "unicode": "e60e",
       "unicode_decimal": 58894
-    },
-    {
-      "icon_id": "7165594",
-      "name": "应用",
-      "font_class": "yingyong",
-      "unicode": "e65a",
-      "unicode_decimal": 58970
     },
     {
       "icon_id": "11372647",

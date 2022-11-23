@@ -8,7 +8,7 @@ export default {
     {
       path: 'home',
       component: () => import('@/views/home/index'),
-      meta: { title: '仪表盘', icon: 'icon-zhuye' }
+      meta: { title: '仪表盘', icon: 'icon-yibiaopan' }
     }
   ]
 }

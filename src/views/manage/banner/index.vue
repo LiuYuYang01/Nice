@@ -17,7 +17,7 @@
             <el-input v-model="bannerConfig.image" />
 
             <!-- 上传轮播图 -->
-            <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple :on-preview="handlePreview">
+            <el-upload class="upload-demo" drag action="#" :http-request="upload" multiple>
               <i class="el-icon-upload" />
               <div class="el-upload__text">将文件拖到此处，或<em> 点击上传</em></div>
               <div slot="tip" class="el-upload__tip">只能上传jpg / png文件，且不超过 <b>500kb</b></div>
@@ -80,7 +80,8 @@ export default {
         {
           time: '2022-10-17',
           title: '前途未必光明坦荡，但一定充满渴望！',
-          deputyTitle: 'The future may not be bright and open, but it must be full of desire!',
+          deputyTitle:
+            'The future may not be bright and open, but it must be full of desire!',
           image: 'http://liuyuyang.net/img/banner.jpg'
         }
       ],
@@ -92,10 +93,6 @@ export default {
     // 表单提交
     onSubmit() {
       console.log('submit!')
-    },
-    // 图片预览
-    handlePreview(file) {
-      console.log(file)
     },
     toggleSelection(rows) {
       console.log(rows)
@@ -110,6 +107,10 @@ export default {
     // 获取被选中的数据
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    // 上传轮播图
+    upload(file) {
+      console.log(file, 22)
     }
   }
 }
@@ -126,7 +127,7 @@ export default {
   margin-bottom: 20px;
 }
 
-::v-deep .el-tabs--top{
+::v-deep .el-tabs--top {
   padding: 50px;
   background-color: #fff !important;
 }

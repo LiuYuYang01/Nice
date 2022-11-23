@@ -96,7 +96,7 @@
     </el-row>
 
     <!-- 预览组件 -->
-    <!-- <v-md-preview-html :html="html" preview-class="vuepress-markdown-body" /> -->
+    <v-md-preview-html :html="html" preview-class="vuepress-markdown-body" style="margin-top:20px" />
   </div>
 </template>
 

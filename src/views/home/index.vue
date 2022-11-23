@@ -57,7 +57,7 @@
     </el-row>
 
     <!-- 功能栏 -->
-    <el-row class="function" justify="space-between" style="margin-top:20px">
+    <el-row class="function" type="flex" justify="space-between" style="margin-top:20px">
       <!-- 任务 -->
       <el-col :span="6">
         <div class="toDo">
@@ -92,9 +92,36 @@
         </div>
       </el-col>
 
-      <el-col :span="8">2</el-col>
+      <!-- 评论 -->
+      <el-col :span="6">
+        <div class="comments">
+          <!-- 头部 -->
+          <div class="head">
+            <div class="title">评论框</div>
+          </div>
 
-      <el-col :span="8">3</el-col>
+          <!-- 评论列表 -->
+          <div class="list">
+            <div v-for="item in commentsList" :key="item.id" class="item">
+              <!-- 头像 -->
+              <div class="avatar">
+                <img :src="item.avatar" alt="">
+              </div>
+
+              <!-- 评论者 -->
+              <div class="info">
+                <div>{{ item.name }}</div>
+                <p>{{ item.content }}</p>
+              </div>
+
+              <!-- 回复 -->
+              <div class="reply">答</div>
+            </div>
+          </div>
+        </div>
+      </el-col>
+
+      <el-col :span="12">3</el-col>
     </el-row>
   </div>
 </template>
@@ -110,6 +137,7 @@ export default {
   },
   data() {
     return {
+      // 任务列表
       toDoList: [
         {
           id: 1,
@@ -160,6 +188,30 @@ export default {
           id: 10,
           label: '测试',
           state: 0
+        }
+      ],
+      // 评论列表
+      commentsList: [
+        {
+          id: 1,
+          avatar:
+            'https://tse1-mm.cn.bing.net/th/id/OIP-C.MUDE7y9t66yfwUzmFdvNzAAAAA?pid=ImgDet&rs=1',
+          name: 'Choresefree',
+          content: '我正在做前后端分离，up主的前端太棒了'
+        },
+        {
+          id: 2,
+          avatar:
+            'https://tse2-mm.cn.bing.net/th/id/OIP-C.SVy-ppvufEvqufbuOmxmuAAAAA?w=204&h=204&c=7&r=0&o=5&dpr=1.5&pid=1.7',
+          name: '偷马的斗帝',
+          content: '很不错的项目，很纯净，而且还开源'
+        },
+        {
+          id: 3,
+          avatar:
+            'https://tse1-mm.cn.bing.net/th/id/OIP-C.N381qrfBc_hXIEadt_nq3gAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
+          name: '夏隽',
+          content: '插眼等完善'
         }
       ],
       // 被选中的
@@ -292,19 +344,27 @@ export default {
   // 功能
   .function {
     .el-col-6 {
+      overflow: hidden;
       width: 24%;
+      height: 400px;
+      padding: 30px;
+      border-radius: 3px;
+      background-color: #fff;
       border-radius: 3px;
       box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+    }
+
+    // 标题
+    .title {
+      color: #333;
+      font-weight: 900;
+      font-size: 20px;
     }
 
     // 任务
     .toDo {
       position: relative;
       width: 100%;
-      height: 400px;
-      padding: 30px;
-      border-radius: 3px;
-      background-color: #fff;
 
       // 头部
       .head {
@@ -312,13 +372,6 @@ export default {
         justify-content: space-between;
         align-items: center;
         margin-bottom: 15px;
-
-        // 标题
-        .title {
-          color: #333;
-          font-weight: 900;
-          font-size: 20px;
-        }
 
         // 统计
         .count {
@@ -375,11 +428,10 @@ export default {
       // 添加
       .add {
         position: absolute;
-        bottom: 30px;
+        bottom: -60px;
         display: flex;
         justify-content: space-between;
         width: 100%;
-        padding-right: 60px;
 
         // 添加按钮
         .addBtn {
@@ -387,6 +439,99 @@ export default {
           height: 40px;
           padding: 12px;
           padding-right: 6px;
+        }
+      }
+    }
+
+    // 消息
+    .comments {
+      .head {
+        margin-bottom: 25px;
+      }
+
+      .list {
+        overflow: overlay;
+        height: 300px;
+
+        .item {
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          padding-bottom: 15px;
+          margin-top: 15px;
+          border-bottom: 1px solid #f7f4f4;
+
+          .avatar {
+            overflow: hidden;
+            min-width: 35px;
+            min-height: 35px;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+
+          .info {
+            width: 80%;
+            margin-left: 15px;
+
+            div {
+              font-size: 14px;
+              font-weight: 700;
+              color: #555;
+            }
+
+            p {
+              width: 85%;
+              margin: 0;
+              margin-top: 5px;
+              font-size: 12px;
+              color: #999;
+
+              display: -webkit-box !important;
+              overflow: hidden;
+              word-break: break-all;
+              text-overflow: ellipsis;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+            }
+          }
+
+          .reply {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            margin-right: -30px;
+            color: #727cf5;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+          }
+
+          &:hover .reply {
+            margin-right: 10px;
+          }
+          &:first-child {
+            margin-top: 0;
+          }
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+
+        // 滚动条
+        &::-webkit-scrollbar {
+          width: 6px; // 横向滚动条
+          height: 6px; // 纵向滚动条 必写
+        }
+        // 滚动条的滑块
+        &::-webkit-scrollbar-thumb {
+          background-color: #ddd;
+          border-radius: 3px;
         }
       }
     }
@@ -404,7 +549,7 @@ export default {
   text-decoration: line-through;
 }
 
-// 表格滚动条
+// 滚动条
 ::v-deep .function .toDo .box::-webkit-scrollbar {
   width: 6px; // 横向滚动条
   height: 6px; // 纵向滚动条 必写
