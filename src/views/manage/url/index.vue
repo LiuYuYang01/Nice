@@ -16,7 +16,7 @@
         </div>
       </div>
 
-      <!-- 添加友联 -->
+      <!-- 新增友联 -->
       <div class="item" @click="add">
         <i class="el-icon-plus" />
       </div>
@@ -128,7 +128,7 @@ export default {
         this.$message.error(message)
       }
     },
-    // 添加
+    // 新增
     add() {
       this.title = '新增友联'
       this.DialogVisible = true
@@ -212,7 +212,7 @@ export default {
   // 友联列表
   .list {
     overflow: hidden;
-    width: 1110px;
+    // width: 1110px;
     margin: 0 auto;
 
     .item {

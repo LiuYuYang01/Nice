@@ -3,18 +3,18 @@
     <h3 class="title text-gradient">轮播图管理</h3>
     <el-row>
       <el-col :span="9">
-        <!-- 添加轮播图 -->
-        <el-form ref="form" :model="bannerConfig" label-width="80px" style="margin-top:15px">
-          <el-form-item label="标题">
-            <el-input v-model="bannerConfig.title" />
+        <!-- 新增轮播图 -->
+        <el-form ref="banner" :model="bannerForm" :rules="bannerVerify" label-width="80px" style="margin-top:15px">
+          <el-form-item label="标题" prop="title">
+            <el-input v-model="bannerForm.title" />
           </el-form-item>
 
-          <el-form-item label="副标题">
-            <el-input v-model="bannerConfig.deputyTitle" />
+          <el-form-item label="副标题" prop="deputyTitle">
+            <el-input v-model="bannerForm.deputyTitle" />
           </el-form-item>
 
-          <el-form-item label="轮播图">
-            <el-input v-model="bannerConfig.image" />
+          <el-form-item label="轮播图" prop="image">
+            <el-input v-model="bannerForm.image" @blur="imageBlur(bannerForm.image)" />
 
             <!-- 上传成功后显示刚刚上传的图片 -->
             <div v-if="banner.length === 0">
@@ -22,53 +22,65 @@
               <el-upload class="upload-demo" action="#" :http-request="upload" :file-list="fileList" :on-change="changeFile" :on-exceed="exceed" :before-upload="beforeUpload" :limit="1" drag>
                 <i class="el-icon-upload" />
                 <div class="el-upload__text">将文件拖到此处，或<em> 点击上传</em></div>
-                <div slot="tip" class="el-upload__tip">只能上传jpg / png文件，且不超过 <b>500kb</b></div>
+                <div slot="tip" class="el-upload__tip">只能上传jpg / png文件，且不超过 <b>5M</b></div>
               </el-upload>
               <el-progress v-if="is_percent" :percentage="percent" />
             </div>
 
             <!-- 图片 -->
             <div v-else class="banner">
-              <img :src="banner" alt="" class="banner">
+              <img v-image="require('@/assets/default.png')" :src="banner" alt="" class="banner">
 
               <!-- 功能 -->
               <div class="function">
+                <!-- 预览图片 -->
                 <i class="el-icon-view" @click="preview" />
-                <i class="el-icon-download" />
-                <i class="el-icon-delete" />
+
+                <!-- 下载图片 -->
+                <a :href="banner" :download="banner" target="view_window">
+                  <i class="el-icon-download" />
+                </a>
+
+                <!-- 删除图片 -->
+                <i class="el-icon-delete" @click="delBanner" />
               </div>
             </div>
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" style="width: 100%" @click="onSubmit">添加</el-button>
+            <el-button type="primary" style="width: 100%" @click="btnOk">{{ title }}</el-button>
           </el-form-item>
         </el-form>
       </el-col>
 
       <el-col :span="12" style="margin-left:120px">
         <!-- 轮播图列表 -->
-        <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" />
-          <el-table-column label="日期" width="120">
-            <template slot-scope="scope">{{ scope.row.time }}</template>
+        <el-table ref="selectTable" :data="bannerData" tooltip-effect="dark" style="width: 100%" border>
+          <el-table-column prop="title" label="标题" width="200" align="center" />
+          <el-table-column prop="deputyTitle" width="300" label="副标题" align="center" />
+          <el-table-column prop="image" width="270" label="轮播图" align="center">
+            <a slot-scope="{ row }" :href="row.image" target="_blank" class="imageUrl">{{ row.image }}</a>
           </el-table-column>
-          <el-table-column prop="title" label="标题" width="200" />
-          <el-table-column prop="deputyTitle" width="300" label="副标题" />
-          <el-table-column prop="image" width="400" label="轮播图" />
+          <el-table-column prop="date" label="日期" width="150" sortable align="center">
+            <template slot-scope="{ row }">{{ row.date | dateFormat }}</template>
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" width="150" align="center">
+            <template slot-scope="{ row }">
+              <el-button type="text" size="small" style="color:#4fb985" @click="view(row.id)">查看</el-button>
+              <el-button type="text" size="small" @click="emit(row.id)">编辑</el-button>
+              <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
-
-        <!-- 操作 -->
-        <el-row type="flex" justify="end" style="margin-top:20px">
-          <el-button size="mini" @click="handleDelete(scope.$index, scope.row)">查看</el-button>
-          <el-button size="mini" type="primary">编辑</el-button>
-          <el-button size="mini" type="danger">删除</el-button>
-        </el-row>
       </el-col>
 
       <!-- 图片预览 -->
       <el-dialog title="图片预览" :visible.sync="dialogVisible">
-        <img width="100%" :src="banner" alt="">
+        <img v-image="require('@/assets/default.png')" width="100%" :src="banner" alt="">
+      </el-dialog>
+
+      <el-dialog title="图片预览" :visible.sync="dialogImage">
+        <img v-image="require('@/assets/default.png')" width="100%" :src="viewImage" alt="">
       </el-dialog>
     </el-row>
   </div>
@@ -77,50 +89,56 @@
 <script>
 import COS from 'cos-js-sdk-v5'
 import { dateFormat } from '@/filter'
+import {
+  addBannerAPI,
+  delBannerAPI,
+  updateBannerAPI,
+  getBannerAPI,
+  getAllBannerAPI
+} from '@/api/banner'
 export default {
   data() {
     return {
       cos: null,
+      title: '新增轮播图',
       // 轮播图设置
-      bannerConfig: {
+      bannerForm: {
         title: '',
         deputyTitle: '',
-        image: ''
+        image: '',
+        date: ''
       },
       // 轮播图列表数据
-      tableData: [
-        {
-          time: '2022-10-19',
-          title: '追求理想与现实的平衡！',
-          deputyTitle: 'Pursue the balance between ideal and reality!',
-          image: 'http://liuyuyang.net/img/banner.jpg'
-        },
-        {
-          time: '2022-10-18',
-          title: '不断改善，成为最佳！',
-          deputyTitle: 'Keep improving and become the best!',
-          image: 'http://liuyuyang.net/img/banner.jpg'
-        },
-        {
-          time: '2022-10-17',
-          title: '前途未必光明坦荡，但一定充满渴望！',
-          deputyTitle:
-            'The future may not be bright and open, but it must be full of desire!',
-          image: 'http://liuyuyang.net/img/banner.jpg'
-        }
-      ],
+      bannerData: [],
+      bannerVerify: {
+        title: [
+          { required: true, message: '轮播图标题不能为空' },
+          { min: 1, max: 30, message: '轮播图标题限制为 1 ~ 30 个字符' }
+        ],
+        deputyTitle: [
+          { required: true, message: '轮播图副标题不能为空' },
+          { min: 1, max: 100, message: '轮播图副标题限制为 1 ~ 100 个字符' }
+        ],
+        image: [
+          { required: true, message: '轮播图不能为空' },
+          { min: 1, max: 300, message: '轮播图限制为 1 ~ 300 个字符' }
+        ]
+      },
       fileList: [],
-      // 多选框
-      multipleSelection: [],
       // 进度条进度
       percent: 0,
       // 是否显示进度条
       is_percent: false,
       // 图片
       banner: '',
+      viewImage: '',
       // 图片预览
-      dialogVisible: false
+      dialogVisible: false,
+      dialogImage: false
     }
+  },
+  created() {
+    this.getAllBannerAPI()
   },
   mounted() {
     this.cos = new COS({
@@ -129,13 +147,117 @@ export default {
     })
   },
   methods: {
-    // 表单提交
-    onSubmit() {
-      console.log('submit!')
+    // 初始化
+    format() {
+      this.title = '新增轮播图'
+      this.banner = ''
+      this.bannerForm = {
+        title: '',
+        deputyTitle: '',
+        image: '',
+        date: ''
+      }
+      this.fileList = []
+      this.$refs.banner.resetFields()
     },
-    // 获取被选中的数据
-    handleSelectionChange(val) {
-      this.multipleSelection = val
+    // 获取轮播图列表
+    async getAllBannerAPI() {
+      const { data, message, success } = await getAllBannerAPI()
+
+      if (success) {
+        this.bannerData = data
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 查看轮播图
+    async view(id) {
+      const { data, message, success } = await getBannerAPI(id)
+
+      if (success) {
+        this.viewImage = data.image
+      } else {
+        this.$message.error(message)
+      }
+
+      this.dialogImage = true
+    },
+    // 编辑轮播图
+    async emit(id) {
+      this.title = '编辑轮播图'
+
+      const { data, message, success } = await getBannerAPI(id)
+
+      if (success) {
+        this.bannerForm = data
+        this.banner = data.image
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 删除轮播图
+    async del(id) {
+      this.$confirm('你确定要删除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          const { message, success } = await delBannerAPI({ id })
+
+          if (success) {
+            this.$message.success('删除成功')
+            this.getAllBannerAPI()
+            // 初始化
+            this.format()
+          } else {
+            this.$message.error(message)
+          }
+
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    // 新增 or 编辑
+    async btnOk() {
+      if (this.title === '新增轮播图') {
+        const { message, success } = await addBannerAPI(this.bannerForm)
+
+        if (success) {
+          this.$message.success('新增成功')
+
+          // 获取最新数据
+          this.getAllBannerAPI()
+          // 初始化
+          this.format()
+        } else {
+          this.$message.error(message)
+        }
+      } else if (this.title === '编辑轮播图') {
+        const { message, success } = await updateBannerAPI(this.bannerForm)
+
+        if (success) {
+          this.$message.success('编辑成功')
+
+          this.getAllBannerAPI()
+          // 初始化
+          this.format()
+        } else {
+          this.$message.error(message)
+        }
+      }
+    },
+    // 图片表单失去焦点触发
+    imageBlur(val) {
+      this.banner = val
     },
     // 文件超出
     exceed() {
@@ -219,7 +341,7 @@ export default {
 
           if (!err && data.statusCode === 200) {
             this.banner = 'http://' + data.Location
-            this.bannerConfig.image = this.banner
+            this.bannerForm.image = this.banner
           }
         }
       )
@@ -227,6 +349,12 @@ export default {
     // 图片预览
     preview() {
       this.dialogVisible = true
+    },
+    // 重选图片
+    delBanner() {
+      this.banner = ''
+      this.fileList = []
+      this.bannerForm.image = ''
     }
   }
 }
@@ -343,5 +471,25 @@ export default {
 
 ::v-deep .el-dialog__body {
   padding: 20px 20px;
+}
+
+.imageUrl {
+  transition: all 0.3s;
+}
+.imageUrl:hover {
+  color: #727cf5;
+}
+
+::v-deep .el-table .cell {
+  display: -webkit-box !important;
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+::v-deep .el-table__fixed-right {
+  height: 100% !important;
 }
 </style>

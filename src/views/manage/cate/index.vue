@@ -6,7 +6,7 @@
       </el-col>
 
       <el-col :span="12" style="text-align: end; margin-right: 90px">
-        <el-button type="primary" size="mini" @click="addCate">添加分类</el-button>
+        <el-button type="primary" size="mini" @click="addCate">新增分类</el-button>
       </el-col>
     </el-row>
 

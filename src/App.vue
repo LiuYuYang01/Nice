@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- 全局DIY按钮 -->
-    <div class="DIY" @click="drawer = true">
+    <div v-if="is" class="DIY" @click="drawer = true">
       <i class="el-icon-setting" />
     </div>
 
@@ -74,6 +74,11 @@ export default {
       defaultState: 1,
       isSelected: 2,
       color: '#727cf5'
+    }
+  },
+  computed: {
+    is() {
+      return this.$store.getters.token
     }
   },
   watch: {

@@ -3,7 +3,7 @@
     <h3 class="title text-gradient">标签管理</h3>
     <el-row type="flex" justify="space-between">
       <el-col :span="9">
-        <!-- 添加标签 -->
+        <!-- 新增标签 -->
         <el-form ref="tag" v-loading="tag_loading" :model="tagForm" :rules="tagVerify" label-width="80px" style="margin-top:15px">
           <el-form-item label="标签" prop="title">
             <el-input v-model="tagForm.title" />
@@ -55,7 +55,7 @@ import {
 export default {
   data() {
     return {
-      operate: '添加',
+      operate: '新增标签',
       tagForm: {
         title: '',
         mark: ''
@@ -97,11 +97,12 @@ export default {
     async updateTagAPI(id) {
       this.tag_loading = true
 
-      this.operate = '编辑'
+      this.operate = '编辑标签'
 
       const { data, message, success } = await getTagAPI(id)
       if (success) {
         this.tagForm = data
+        this.title = '新增标签'
       } else {
         this.$message.error(message)
       }
@@ -150,7 +151,7 @@ export default {
     },
     // 提交
     async btnOk() {
-      if (this.operate === '添加') {
+      if (this.operate === '新增标签') {
         const { message, success } = await addTagAPI(this.tagForm)
         if (success) {
           // 编辑完成后清空内容
@@ -167,7 +168,7 @@ export default {
         }
 
         this.$refs.tag.resetFields()
-      } else if (this.operate === '编辑') {
+      } else if (this.operate === '编辑标签') {
         const { message, success } = await updateTagAPI(this.tagForm)
         if (success) {
           this.tagForm = {
@@ -175,8 +176,8 @@ export default {
             mark: ''
           }
 
-          // 还原为添加状态
-          this.operate = '添加'
+          // 还原为新增状态
+          this.operate = '新增标签'
 
           this.getAllTagAPI()
 

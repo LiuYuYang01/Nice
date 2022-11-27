@@ -34,7 +34,7 @@
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
           </el-table-column>
 
-          <el-table-column fixed="right" label="操作" width="200" align="center">
+          <el-table-column fixed="right" label="操作" width="150" align="center">
             <template slot-scope="{ row }">
               <el-button type="text" size="small" @click="emit(row.id)">编辑</el-button>
               <!-- <el-button type="text" size="small" style="color:#49b984">回复</el-button> -->
@@ -81,11 +81,11 @@
           </el-table-column>
           <el-table-column prop="article" label="文章标题" width="250" align="center" show-overflow-tooltip />
 
-          <el-table-column label="评论时间" width="200" align="center">
+          <el-table-column label="评论时间" width="200" sortable align="center">
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
           </el-table-column>
 
-          <el-table-column fixed="right" label="操作" width="200" align="center">
+          <el-table-column fixed="right" label="操作" width="150" align="center">
             <template slot-scope="{ row }">
               <el-button type="text" size="small" @click="pass(row.id)">通过</el-button>
               <!-- <el-button type="text" size="small" style="color:#49b984">回复</el-button> -->
