@@ -85,7 +85,7 @@ export default {
         label: 'title'
       },
       loading: false,
-      title: '新增分类',
+      title: '',
       DialogVisible: false,
       // 分类信息
       cateForm: {
@@ -189,16 +189,29 @@ export default {
     },
     // 删除分类
     async delCateAPI(id) {
-      const { message, success } = await delCateAPI({ id })
+      this.$confirm('你确定要删除该分类吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          const { message, success } = await delCateAPI({ id })
 
-      if (success) {
-        this.$message.success('删除分类成功')
+          if (success) {
+            this.$message.success('删除分类成功')
 
-        // 获取最新数据
-        this.getAllCateAPI()
-      } else {
-        this.$message.error(message)
-      }
+            // 获取最新数据
+            this.getAllCateAPI()
+          } else {
+            this.$message.error(message)
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 编辑回显分类数据
     async updateCateAPI(id) {
@@ -269,22 +282,5 @@ export default {
 
 ::v-deep .el-tree > .is-focusable .el-col-24 {
   font-size: 14px;
-}
-
-// 提示框标题背景
-::v-deep .el-dialog__header {
-  background-color: #727cf5;
-  padding-bottom: 17px;
-}
-
-::v-deep .el-dialog__title {
-  color: #fff !important;
-}
-
-::v-deep .el-dialog__body {
-  padding: 30px 40px 0px 0;
-}
-::v-deep .el-dialog__headerbtn .el-dialog__close {
-  color: #fff;
 }
 </style>

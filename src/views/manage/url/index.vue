@@ -61,7 +61,7 @@ export default {
     return {
       loading: false,
       linkList: [],
-      title: '新增友联',
+      title: '',
       DialogVisible: false,
       // 友联
       linkForm: {
@@ -78,22 +78,22 @@ export default {
           {
             min: 1,
             max: 10,
-            message: '友联名称长度在 1 ~ 10 个字符',
+            message: '友联名称限制为 1 ~ 10 个字符',
             trigger: 'blur'
           }
         ],
         url: [
           { required: true, message: '友联链接不能为空' },
-          { min: 1, max: 50, message: '友联链接长度在 1 ~ 50 个字符' }
+          { min: 1, max: 50, message: '友联链接限制为 1 ~ 50 个字符' }
         ],
         email: [
           { required: true, message: '友联邮箱不能为空' },
-          { min: 1, max: 50, message: '友联邮箱长度在 1 ~ 50 个字符' }
+          { min: 1, max: 50, message: '友联邮箱限制为 1 ~ 50 个字符' }
         ],
         icon: [{ required: true, message: '友联图标不能为空' }],
         description: [
           { required: true, message: '友联描述不能为空' },
-          { min: 1, max: 50, message: '友联描述长度在 1 ~ 50 个字符' }
+          { min: 1, max: 50, message: '友联描述限制为 1 ~ 50 个字符' }
         ]
       }
     }
@@ -151,15 +151,28 @@ export default {
     },
     // 删除友联
     async delLinkAPI(id) {
-      const { message, success } = await delLinkAPI({ id })
+      this.$confirm('你确定要删除该友联吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          const { message, success } = await delLinkAPI({ id })
 
-      if (success) {
-        // 获取最新数据
-        this.getAllLinkAPI()
-        this.$message.success('删除友联成功')
-      } else {
-        this.$message.error(message)
-      }
+          if (success) {
+            // 获取最新数据
+            this.getAllLinkAPI()
+            this.$message.success('删除友联成功')
+          } else {
+            this.$message.error(message)
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 提交
     async btnOk() {
@@ -307,20 +320,5 @@ export default {
       }
     }
   }
-}
-
-// 提示框标题背景
-::v-deep .el-dialog__header {
-  background-color: #727cf5;
-  padding-bottom: 17px;
-}
-::v-deep .el-dialog__title {
-  color: #fff !important;
-}
-::v-deep .el-dialog__body {
-  padding: 30px 40px 0px 10px;
-}
-::v-deep .el-dialog__headerbtn .el-dialog__close {
-  color: #fff;
 }
 </style>

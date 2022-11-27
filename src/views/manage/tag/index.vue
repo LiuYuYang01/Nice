@@ -110,15 +110,28 @@ export default {
     },
     // 删除标签
     async delTagAPI(id) {
-      const { message, success } = await delTagAPI({ id })
+      this.$confirm('你确定要删除该标签吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          const { message, success } = await delTagAPI({ id })
 
-      if (success) {
-        // 获取最新数据
-        this.getAllTagAPI()
-        this.$message.success('删除标签成功')
-      } else {
-        this.$message.error(message)
-      }
+          if (success) {
+            // 获取最新数据
+            this.getAllTagAPI()
+            this.$message.success('删除标签成功')
+          } else {
+            this.$message.error(message)
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     // 获取分类列表
     async getAllTagAPI() {

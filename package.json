@@ -17,6 +17,7 @@
     "@kangc/v-md-editor": "^1.7.11",
     "axios": "0.18.1",
     "core-js": "^3.25.5",
+    "cos-js-sdk-v5": "^1.4.13",
     "echarts": "^5.4.0",
     "element-resize-detector": "^1.2.4",
     "element-ui": "2.13.2",

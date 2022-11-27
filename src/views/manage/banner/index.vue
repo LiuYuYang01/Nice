@@ -16,12 +16,28 @@
           <el-form-item label="轮播图">
             <el-input v-model="bannerConfig.image" />
 
-            <!-- 上传轮播图 -->
-            <el-upload class="upload-demo" drag action="#" :http-request="upload" multiple>
-              <i class="el-icon-upload" />
-              <div class="el-upload__text">将文件拖到此处，或<em> 点击上传</em></div>
-              <div slot="tip" class="el-upload__tip">只能上传jpg / png文件，且不超过 <b>500kb</b></div>
-            </el-upload>
+            <!-- 上传成功后显示刚刚上传的图片 -->
+            <div v-if="banner.length === 0">
+              <!-- 上传轮播图 -->
+              <el-upload class="upload-demo" action="#" :http-request="upload" :file-list="fileList" :on-change="changeFile" :on-exceed="exceed" :before-upload="beforeUpload" :limit="1" drag>
+                <i class="el-icon-upload" />
+                <div class="el-upload__text">将文件拖到此处，或<em> 点击上传</em></div>
+                <div slot="tip" class="el-upload__tip">只能上传jpg / png文件，且不超过 <b>500kb</b></div>
+              </el-upload>
+              <el-progress v-if="is_percent" :percentage="percent" />
+            </div>
+
+            <!-- 图片 -->
+            <div v-else class="banner">
+              <img :src="banner" alt="" class="banner">
+
+              <!-- 功能 -->
+              <div class="function">
+                <i class="el-icon-view" @click="preview" />
+                <i class="el-icon-download" />
+                <i class="el-icon-delete" />
+              </div>
+            </div>
           </el-form-item>
 
           <el-form-item>
@@ -49,14 +65,22 @@
           <el-button size="mini" type="danger">删除</el-button>
         </el-row>
       </el-col>
+
+      <!-- 图片预览 -->
+      <el-dialog title="图片预览" :visible.sync="dialogVisible">
+        <img width="100%" :src="banner" alt="">
+      </el-dialog>
     </el-row>
   </div>
 </template>
 
 <script>
+import COS from 'cos-js-sdk-v5'
+import { dateFormat } from '@/filter'
 export default {
   data() {
     return {
+      cos: null,
       // 轮播图设置
       bannerConfig: {
         title: '',
@@ -85,32 +109,124 @@ export default {
           image: 'http://liuyuyang.net/img/banner.jpg'
         }
       ],
+      fileList: [],
       // 多选框
-      multipleSelection: []
+      multipleSelection: [],
+      // 进度条进度
+      percent: 0,
+      // 是否显示进度条
+      is_percent: false,
+      // 图片
+      banner: '',
+      // 图片预览
+      dialogVisible: false
     }
+  },
+  mounted() {
+    this.cos = new COS({
+      SecretId: 'AKIDWwriLexHTjmbFvW0JQUbLt1LRJPK4a8X',
+      SecretKey: 'IOUZaP3Tiy4GOPDoDQVu8BFVcWFn8HCS'
+    })
   },
   methods: {
     // 表单提交
     onSubmit() {
       console.log('submit!')
     },
-    toggleSelection(rows) {
-      console.log(rows)
-      if (rows) {
-        rows.forEach((row) => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-      }
-    },
     // 获取被选中的数据
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    // 文件超出
+    exceed() {
+      this.$message.error('最多只能上传一张轮播图')
+    },
+    // 文件发生变化
+    changeFile(file, fileList) {
+      this.fileList = fileList.map((item) => item)
+    },
+    // 上传图片之前校验一下
+    beforeUpload(file) {
+      const types = [
+        'image/jpg',
+        'image/jpeg',
+        'image/gif',
+        'image/bmp',
+        'image/png'
+      ]
+
+      if (!types.includes(file.type)) {
+        this.$message.error('只支持上传以下格式：jpg jpeg png gif bmp')
+        return false
+      }
+
+      // 限制最大上传
+      const maxSize = 50 * 1024 * 1024
+      if (file.size > maxSize) {
+        this.$message.error('图片的最大限制为5MB')
+        return false
+      }
+
+      return true
+    },
     // 上传轮播图
-    upload(file) {
-      console.log(file, 22)
+    upload(params) {
+      // 用当前时间 + 4位随机数作为图片名称可以避免图片名称重复
+      const suffix = params.file.type.split('/')[1] // 后缀
+      const name =
+        dateFormat(params.file.lastModifiedDate)
+          .split(':')
+          .join('')
+          .split('-')
+          .join('')
+          .split(' ')
+          .join('') +
+        random() +
+        '.' +
+        suffix
+
+      function random() {
+        return Math.floor(Math.random() * (10000 - 1 + 1)) + 1
+      }
+
+      this.cos.putObject(
+        {
+          // 存储桶
+          Bucket: 'liuyuyang-1258623920',
+          // 地域
+          Region: 'ap-nanjing',
+          // 文件名
+          Key: 'Nice-' + name,
+          // 上传文件对象
+          Body: params.file,
+          StorageClass: 'STANDARD',
+          // 进度条
+          onProgress: (params) => {
+            this.is_percent = true
+            this.percent = params.percent * 100
+
+            // 上传完毕之后自动清零并关闭进度条
+            if (this.percent === 100) {
+              setTimeout(() => {
+                this.percent = 0
+                this.is_percent = false
+              }, 1500)
+            }
+          }
+        },
+        (err, data) => {
+          console.log(err || data)
+
+          if (!err && data.statusCode === 200) {
+            this.banner = 'http://' + data.Location
+            this.bannerConfig.image = this.banner
+          }
+        }
+      )
+    },
+    // 图片预览
+    preview() {
+      this.dialogVisible = true
     }
   }
 }
@@ -162,5 +278,70 @@ export default {
 ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
   background-color: #eee;
   border-radius: 3px;
+}
+
+// 进度条
+::v-deep .el-progress-bar {
+  padding-right: 50px;
+  margin-right: -50px;
+}
+
+.banner {
+  position: relative;
+
+  img {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
+    vertical-align: middle;
+  }
+
+  .function {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%);
+    width: 58%;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+
+    i {
+      color: #fff;
+      font-size: 30px;
+      margin: 0 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+
+      &:hover {
+        color: #727cf5;
+      }
+    }
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    height: 96%;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s;
+    opacity: 0;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+
+  &:hover .function {
+    opacity: 1;
+  }
+}
+
+::v-deep .el-dialog__body {
+  padding: 20px 20px;
 }
 </style>

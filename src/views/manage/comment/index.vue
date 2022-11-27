@@ -19,183 +19,354 @@
         <span slot="label"><i class="el-icon-s-grid" /> 评论列表</span>
 
         <!-- 评论列表 -->
-        <el-table ref="multipleTable" border :data="commentsData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table ref="multipleTable" v-loading="loading" border :data="commentsData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" />
           <el-table-column prop="name" label="用户" width="130" align="center" show-overflow-tooltip />
-          <el-table-column prop="mailbox" label="邮箱" width="200" align="center" show-overflow-tooltip />
+          <el-table-column prop="email" label="邮箱" width="200" align="center" show-overflow-tooltip />
           <el-table-column label="评论内容" width="300" align="center" show-overflow-tooltip>
             <template slot-scope="{row}">
               <a href="javascript:;" class="hoverTitle" @click="showContent(row.content)">{{ row.content }}</a>
             </template>
           </el-table-column>
-          <el-table-column prop="title" label="文章标题" width="250" align="center" show-overflow-tooltip />
+          <el-table-column prop="article" label="文章标题" width="250" align="center" show-overflow-tooltip />
 
           <el-table-column label="评论时间" width="200" align="center">
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
           </el-table-column>
 
           <el-table-column fixed="right" label="操作" width="200" align="center">
-            <template>
-              <el-button type="text" size="small">编辑</el-button>
-              <el-button type="text" size="small" style="color:#909399">回复</el-button>
-              <el-button type="text" size="small" style="color:#F56C6C">删除</el-button>
+            <template slot-scope="{ row }">
+              <el-button type="text" size="small" @click="emit(row.id)">编辑</el-button>
+              <!-- <el-button type="text" size="small" style="color:#49b984">回复</el-button> -->
+              <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
 
         <!-- 分页 -->
-        <el-row type="flex" justify="end" style="margin-top:40px">
-          <el-pagination background layout="prev, pager, next" :total="1000" />
+        <el-row type="flex" justify="space-between" style="margin-top:40px">
+          <el-col>
+            <el-dropdown trigger="click" @command="sift">
+              <el-button size="mini">
+                筛选<i class="el-icon-arrow-down el-icon--right" />
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="del">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-col>
+
+          <el-col :span="9">
+            <el-pagination background layout="prev, pager, next" :total="100" />
+          </el-col>
         </el-row>
       </el-tab-pane>
 
+      <!-- 审核 -->
       <el-tab-pane name="draft">
         <span slot="label">
           <i class="el-icon-c-scale-to-original" /> 待审核
-          <el-badge value="2" />
+          <el-badge :value="auditData.length" />
         </span>
 
         <!-- 审核列表 -->
         <el-table ref="multipleTable" border :data="auditData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" />
           <el-table-column prop="name" label="用户" width="130" align="center" show-overflow-tooltip />
-          <el-table-column prop="mailbox" label="邮箱" width="200" align="center" show-overflow-tooltip />
-          <el-table-column prop="content" label="评论内容" width="300" align="center" show-overflow-tooltip />
-          <el-table-column prop="title" label="文章标题" width="250" align="center" show-overflow-tooltip />
+          <el-table-column prop="email" label="邮箱" width="200" align="center" show-overflow-tooltip />
+          <el-table-column label="评论内容" width="300" align="center" show-overflow-tooltip>
+            <template slot-scope="{row}">
+              <a href="javascript:;" class="hoverTitle" @click="showContent(row.content)">{{ row.content }}</a>
+            </template>
+          </el-table-column>
+          <el-table-column prop="article" label="文章标题" width="250" align="center" show-overflow-tooltip />
 
           <el-table-column label="评论时间" width="200" align="center">
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
           </el-table-column>
 
-          <el-table-column fixed="right" label="操作" width="150" align="center">
-            <template>
-              <el-button type="text" size="small">通过</el-button>
-              <el-button type="text" size="small" style="color:#49b984">回复</el-button>
+          <el-table-column fixed="right" label="操作" width="200" align="center">
+            <template slot-scope="{ row }">
+              <el-button type="text" size="small" @click="pass(row.id)">通过</el-button>
+              <!-- <el-button type="text" size="small" style="color:#49b984">回复</el-button> -->
+              <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
+
+        <!-- 分页 -->
+        <el-row type="flex" justify="space-between" style="margin-top:40px">
+          <el-col>
+            <el-dropdown trigger="click" @command="sift">
+              <el-button size="mini">
+                筛选<i class="el-icon-arrow-down el-icon--right" />
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="del">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-col>
+
+          <el-col :span="9">
+            <el-pagination background layout="prev, pager, next" :total="100" />
+          </el-col>
+        </el-row>
       </el-tab-pane>
     </el-tabs>
 
-    <el-dialog title="评论详情" :visible.sync="commentsDialog" :show-close="false" width="20%">
+    <!-- 查看评论详情 -->
+    <el-dialog title="评论详情" class="reviewDetails" :visible.sync="commentsDialog" :show-close="false" width="20%">
       <el-row>
         <el-col :span="6" style="margin-bottom:20px;width:100%;line-height:20px">{{ commentsInfo }}</el-col>
       </el-row>
+    </el-dialog>
+
+    <!-- 对话框 -->
+    <el-dialog :title="title" :visible.sync="DialogVisible" width="30%" @close="close">
+      <el-form ref="comment" v-loading="dialogLoading" :model="commentForm" :rules="commentVerify" label-width="80px">
+        <el-form-item label="用户" prop="name">
+          <el-input v-model="commentForm.name" />
+        </el-form-item>
+
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="commentForm.email" />
+        </el-form-item>
+
+        <el-form-item label="内容" prop="content">
+          <el-input v-model="commentForm.content" />
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="close">取 消</el-button>
+        <el-button type="primary" @click="btnOk">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  delCommentAPI,
+  updateCommentAPI,
+  auditCommentAPI,
+  batchDelCommentAPI,
+  getCommentAPI,
+  getAllCommentAPI
+} from '@/api/comment'
 export default {
   data() {
     return {
       search: '',
-      // 评论列表
-      commentsData: [
-        {
-          date: new Date(),
-          name: 'Envov',
-          mailbox: '3311118881@qq.com',
-          content: '这个操作和在forEach中用break有点像',
-          title: '阿里面试官：如何给所有的async函数添加try/catch？'
-        },
-        {
-          date: new Date(),
-          name: '昆吾kw',
-          mailbox: '3311118881@qq.com',
-          content: '学到了！',
-          title: '阿里面试官：如何给所有的async函数添加try/catch？'
-        },
-        {
-          date: new Date(),
-          name: '孤寂无情',
-          mailbox: '3311118881@qq.com',
-          content: '你们都快去吧，这样子我的竞争者又少了很多',
-          title: '为啥 JSON 之父要建议：退役 JavaScript'
-        },
-        {
-          date: new Date(),
-          name: '我啥也不懂',
-          mailbox: '3311118881@qq.com',
-          content: '都什么年代了，打开一个网站还这么麻烦',
-          title: '都什么年代了，你居然还连不上GitHub？'
-        },
-        {
-          date: new Date(),
-          name: 'Z_Joker',
-          mailbox: '3311118881@qq.com',
-          content:
-            'any application that can be written in JavaScript, will eventually be written in JavaScript.',
-          title: '为啥 JSON 之父要建议：退役 JavaScript'
-        },
-        {
-          date: new Date(),
-          name: 'SuperMan一路',
-          mailbox: '3311118881@qq.com',
-          content:
-            '我也三十，在大厂搬砖加班严重每天九点下班十点多到家，回家了没时间学习，基本就洗洗就躺下了。忙于工作，周末也想好好休息。',
-          title: '三十岁前端的破冰尝试'
-        },
-        {
-          date: new Date(),
-          name: '搬砖侠',
-          mailbox: '3311118881@qq.com',
-          content: '同用golang，能协助大佬开发和维护不',
-          title: '因为不想上班，我花了四个月的时间做了两款小程序'
-        },
-        {
-          date: new Date(),
-          name: '德鲁叔叔',
-          mailbox: '3311118881@qq.com',
-          content:
-            '最近在尝试vite引入到webpack项目里只作为开发环境的HMR，而生产构建还是用webpack。可能需要做一些两者之间的兼容把',
-          title: '我从 webpack 换到 vite，又换回了 webpack'
-        },
-        {
-          date: new Date(),
-          name: '亮亮亮亮亮亮',
-          mailbox: '3311118881@qq.com',
-          content: '厉害啊我的哥',
-          title: '前端实现一个最近抖音很火的图片选择题特效'
-        },
-        {
-          date: new Date(),
-          name: 'nanning',
-          mailbox: '3311118881@qq.com',
-          content:
-            '我1年的经验转行做不别的了，现在时隔多年还有机会转回来吗？31岁',
-          title: '深飘4年小前端的困境与挣扎'
-        }
-      ],
-      // 审核列表
-      auditData: [
-        {
-          date: new Date(),
-          name: '我啥也不懂',
-          mailbox: '3311118881@qq.com',
-          content: '都什么年代了，打开一个网站还这么麻烦',
-          title: '都什么年代了，你居然还连不上GitHub？'
-        },
-        {
-          date: new Date(),
-          name: 'Z_Joker',
-          mailbox: '3311118881@qq.com',
-          content:
-            'any application that can be written in JavaScript, will eventually be written in JavaScript.',
-          title: '为啥 JSON 之父要建议：退役 JavaScript'
-        }
-      ],
       activeName: 'comments',
+      // 评论列表
+      commentsData: [],
+      // 审核列表
+      auditData: [],
+      DialogVisible: false,
+      replyDialog: false,
+      title: '',
+      commentForm: {
+        name: '',
+        email: '',
+        content: '',
+        article: ''
+      },
+      // 评论校验
+      commentVerify: {
+        name: [
+          { required: true, message: '评论者名称不能为空', trigger: 'blur' },
+          {
+            min: 1,
+            max: 10,
+            message: '评论者名称限制为 1 ~ 10 个字符',
+            trigger: 'blur'
+          }
+        ],
+        email: [
+          { required: true, message: '评论者邮箱不能为空' },
+          { min: 1, max: 50, message: '评论者邮箱限制为 1 ~ 50 个字符' }
+        ],
+        content: [
+          { required: true, message: '评论内容不能为空', trigger: 'blur' },
+          {
+            min: 1,
+            max: 100,
+            message: '评论内容限制为 1 ~ 100 个字符',
+            trigger: 'blur'
+          }
+        ],
+        article: [
+          { required: true, message: '评论文章不能为空', trigger: 'blur' }
+        ]
+      },
       // 评论详情框
       commentsDialog: false,
       // 评论信息
-      commentsInfo: ''
+      commentsInfo: '',
+      loading: false,
+      dialogLoading: false,
+      // 选中的评论
+      selectComment: []
     }
   },
+  created() {
+    this.getAllCommentAPI()
+  },
   methods: {
-    // 获取被复选框选中的~
-    handleSelectionChange(e) {
-      console.log(e)
+    // 取消
+    close() {
+      // 重置数据
+      this.commentForm = {
+        name: '',
+        email: '',
+        content: '',
+        article: ''
+      }
+
+      // 重置检验
+      this.$refs.comment.resetFields()
+
+      // 关闭弹出框
+      this.DialogVisible = false
+    },
+    // 获取评论列表
+    async getAllCommentAPI() {
+      this.loading = true
+
+      const { data, message, success } = await getAllCommentAPI()
+      if (success) {
+        // 评论列表
+        const commentsData = []
+        // 待审核
+        const auditData = []
+
+        // 过滤
+        data.forEach((item) => {
+          // 筛选出is_audit的状态，0代表待审核  1代表审核通过
+          if (item.is_audit) {
+            // 审核通过的评论
+            commentsData.push(item)
+          } else {
+            // 待审核的评论
+            auditData.push(item)
+          }
+        })
+
+        this.commentsData = commentsData
+        this.auditData = auditData
+      } else {
+        this.$message.error(message)
+      }
+
+      this.loading = false
+    },
+    // 通过评论
+    async pass(id) {
+      const { message, success } = await auditCommentAPI({ id, is_audit: 1 })
+
+      if (success) {
+        this.$message.success('该评论已通过审核')
+
+        // 获取最新数据
+        this.getAllCommentAPI()
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 删除评论
+    async del(id) {
+      this.$confirm('你确定要删除该评论吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          const { message, success } = await delCommentAPI({ id })
+
+          if (success) {
+            this.$message.success('删除成功')
+
+            // 获取最新数据
+            this.getAllCommentAPI()
+          } else {
+            this.$message.error(message)
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    // 评论回显
+    async emit(id) {
+      this.dialogLoading = true
+
+      this.title = '编辑评论'
+      this.DialogVisible = true
+
+      const { data, message, success } = await getCommentAPI(id)
+
+      if (success) {
+        this.commentForm = data
+      } else {
+        this.$message.error(message)
+      }
+
+      this.dialogLoading = false
+    },
+    // 提交按钮
+    async btnOk() {
+      // 修改评论
+      const { message, success } = await updateCommentAPI({
+        ...this.commentForm,
+        is_audit: 1
+      })
+
+      if (success) {
+        this.$message.success('修改评论成功')
+
+        // 获取最新数据
+        this.getAllCommentAPI()
+        // 初始化
+        this.close()
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 获取被复选框选中的评论
+    handleSelectionChange(arr) {
+      this.selectComment = arr.map((item) => item.id)
+    },
+    // 筛选
+    async sift(type) {
+      if (type === 'del') {
+        this.$confirm('你确定要删除这些评论吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(async() => {
+            const { message, success } = await batchDelCommentAPI({
+              ids: this.selectComment
+            })
+            if (success) {
+              this.$message.success('批量删除成功')
+
+              this.getAllCommentAPI()
+            } else {
+              this.$message.error(message)
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      }
     },
     // 弹出评论详情
     showContent(info) {
@@ -245,19 +416,6 @@ export default {
   border-bottom-left-radius: 0 !important;
 }
 
-// 提示框标题背景
-::v-deep .el-dialog__header {
-  background-color: #727cf5;
-}
-
-::v-deep .el-dialog__title {
-  color: #fff !important;
-}
-
-::v-deep .el-dialog__headerbtn .el-dialog__close {
-  color: #fff !important;
-}
-
 ::v-deep .el-input__inner {
   width: 100% !important;
 }
@@ -271,13 +429,17 @@ export default {
   transition: 0.3s;
 }
 
-::v-deep .el-dialog__body{
+::v-deep .reviewDetails .el-dialog__body {
   padding: 20px 20px 0 !important;
 }
-::v-deep .el-dialog__title{
+::v-deep .reviewDetails .el-dialog__header {
+  padding: 8px 20px 6px;
+}
+::v-deep .reviewDetails .el-dialog__title {
   font-size: 15px;
 }
-::v-deep .el-dialog__header {
-    padding: 8px 20px 6px;
+
+::v-deep .el-button+.el-button{
+  margin-left: 20px;
 }
 </style>

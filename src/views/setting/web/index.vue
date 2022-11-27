@@ -30,7 +30,9 @@
               </el-form-item>
 
               <el-form-item>
-                <el-button type="primary" style="width: 100%" @click="onSubmit">保存</el-button>
+                <el-button type="primary" style="width: 100%" @click="onSubmit">
+                  <i class="el-icon-edit-outline" style="margin-right:5px" />保存
+                </el-button>
               </el-form-item>
             </el-form>
           </el-col>
