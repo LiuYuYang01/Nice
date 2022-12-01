@@ -34,15 +34,15 @@
             <!-- 添加标签 -->
             <el-row>
               <el-col>
-                <!-- <el-autocomplete v-model="tagValut" size="mini" class="inline-input" placeholder="添加标签" @keyup.enter.native="addTags" /> -->
-                <el-input v-model="tagValut" size="mini" placeholder="添加标签" @keyup.enter.native="addTags" />
+                <!-- <el-input v-model="tagValut" size="mini" placeholder="添加标签" @keyup.enter.native="addTags" /> -->
+                <el-autocomplete v-model="tagValut" class="inline-input" size="mini" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect" @keyup.enter.native="addTags" />
               </el-col>
             </el-row>
 
             <!-- 列表 -->
             <el-row type="flex" justify="center">
               <div class="tag" style="padding:0 20px">
-                <el-tag v-for="item in items" :key="item.label" :type="item.type" effect="dark" size="mini">
+                <el-tag v-for="item in tagsItems" :key="item.label" :type="item.type" effect="dark" size="mini">
                   {{ item.label }}
                 </el-tag>
               </div>
@@ -58,13 +58,6 @@
                     <label>
                       <span>公开：</span>
                       <el-switch v-model="options.public" active-color="#727cf5" inactive-color="#d7d7d7" />
-                    </label>
-                  </el-col>
-
-                  <el-col>
-                    <label>
-                      <span>隐藏：</span>
-                      <el-switch v-model="options.hidden" active-color="#727cf5" inactive-color="#d7d7d7" />
                     </label>
                   </el-col>
 
@@ -124,11 +117,12 @@ export default {
         password: false,
         directory: false
       },
-      items: [],
+      tagsItems: [],
       tags: [],
       tagValut: '',
       // el-collapse设置是否默认展开
-      activeNames: ['unfold']
+      activeNames: ['unfold'],
+      restaurants: []
     }
   },
   // 渲染tabs标签列表
@@ -137,6 +131,7 @@ export default {
     this.restaurants = this.loadAll()
   },
   methods: {
+    // 获取分类列表
     async getAllCateAPI() {
       this.cateLoading = true
 
@@ -150,12 +145,17 @@ export default {
     handleNodeClick(val) {
       console.log(val)
     },
+    // 标签远程搜索
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    // 标签过滤
     createFilter(queryString) {
       return (restaurant) => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        )
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
       }
     },
     // 所有标签
@@ -171,25 +171,28 @@ export default {
         { value: 'Nodejs' }
       ]
     },
+    handleSelect(item) {
+      console.log(item)
+    },
     // 按下回车添加标签
     addTags() {
       // 添加标签
       const add = (type) => {
-        this.items.push({ type, label: this.tagValut })
+        this.tagsItems.push({ type, label: this.tagValut })
         this.tagValut = ''
       }
 
-      if (this.items.length === 0) {
+      if (this.tagsItems.length === 0) {
         add('')
-      } else if (this.items.length === 1) {
+      } else if (this.tagsItems.length === 1) {
         add('success')
-      } else if (this.items.length === 2) {
+      } else if (this.tagsItems.length === 2) {
         add('warning')
-      } else if (this.items.length === 3) {
+      } else if (this.tagsItems.length === 3) {
         add('danger')
-      } else if (this.items.length === 4) {
+      } else if (this.tagsItems.length === 4) {
         add('info')
-      } else if (this.items.length === 5) {
+      } else if (this.tagsItems.length === 5) {
         this.$message.error('最多只能添加5个标签~')
       }
     },
@@ -287,7 +290,7 @@ export default {
       width: 30px;
       height: 30px;
       border-radius: 50px;
-      background-color: #fff;
+      background-color: #f9f9f9;
     }
   }
 }

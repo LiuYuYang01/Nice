@@ -20,8 +20,6 @@
 
         <!-- 用户列表信息 -->
         <el-table :data="essayData" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
-          <el-table-column label="ID" align="center" sortable width="100" prop="id" />
-
           <el-table-column prop="title" label="标题" align="center" width="400">
             <template slot-scope="{row}">
               <a href="#/write" class="hoverTitle">{{ row.title }}</a>
