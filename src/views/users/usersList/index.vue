@@ -228,12 +228,6 @@ export default {
             this.$message.error(message)
           }
         })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
     },
     // 编辑用户
     async updateUser(id) {

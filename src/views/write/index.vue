@@ -282,27 +282,9 @@ export default {
 
       // 有id就是编辑，无id就是发布文章
       if (this.id) {
-        const { message, success } = await updAtearticleAPI(this.articleForm)
-
-        if (success) {
-          this.$router.push('/')
-          this.$router.push(`/manage/article`)
-
-          this.$message.success('编辑文章成功')
-        } else {
-          this.$message.error(message)
-        }
+        this.addORdraft(updAtearticleAPI, '编辑文章成功', 0)
       } else {
-        const { message, success } = await addArticleAPI(this.articleForm)
-
-        if (success) {
-          this.$router.push('/')
-          this.$router.push(`/manage/article`)
-
-          this.$message.success('发布文章成功')
-        } else {
-          this.$message.error(message)
-        }
+        this.addORdraft(addArticleAPI, '发布文章成功', 0)
       }
 
       // 将 MarkDown 语法解析为 html
@@ -329,19 +311,27 @@ export default {
       }
     },
     // 保存为草稿
-    async draft() {
-      this.articleForm.is_draft = 1
-      const { message, success } = await updAtearticleAPI(this.articleForm)
+    draft() {
+      if (this.id) {
+        this.addORdraft(updAtearticleAPI, '保存为草稿成功', 1)
+      } else {
+        this.addORdraft(addArticleAPI, '保存为草稿成功', 1)
+      }
+    },
+    // 发布文章或保存为草稿
+    async addORdraft(API, msg, is_draft) {
+      this.articleForm.is_draft = is_draft
+
+      const { message, success } = await API(this.articleForm)
+
       if (success) {
         this.$router.push('/')
         this.$router.push(`/manage/article`)
 
-        this.$message.success('保存为草稿成功')
+        this.$message.success(msg)
       } else {
         this.$message.error(message)
       }
-
-      console.log(this.articleForm)
     }
   }
 }

@@ -219,12 +219,6 @@ export default {
             message: '删除成功!'
           })
         })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
     },
     // 新增 or 编辑
     async btnOk() {

@@ -15,8 +15,10 @@
         </el-row>
       </el-row>
 
+      <!-- 等我有时间了再回头把这里改成组件优化一下结构 ^_^ -->
+
       <!-- 文章列表 -->
-      <el-tab-pane name="essay">
+      <el-tab-pane name="article">
         <span slot="label">
           <i class="el-icon-s-grid" /> 文章列表
         </span>
@@ -29,9 +31,9 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="author" label="作者" align="center" sortable width="180" />
+          <el-table-column prop="author" label="作者" align="center" width="180" />
 
-          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+          <el-table-column prop="cates" label="分类" align="center" width="180" :formatter="filterCates" />
 
           <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
@@ -71,7 +73,7 @@
 
           <el-table-column prop="author" label="作者" align="center" sortable width="180" />
 
-          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+          <el-table-column prop="cates" label="分类" align="center" width="180" :formatter="filterCates" />
 
           <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
@@ -110,7 +112,7 @@
 
           <el-table-column prop="author" label="作者" align="center" sortable width="180" />
 
-          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+          <el-table-column prop="cates" label="分类" align="center" width="180" :formatter="filterCates" />
 
           <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
@@ -148,7 +150,7 @@
 
           <el-table-column prop="author" label="作者" align="center" sortable width="180" />
 
-          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+          <el-table-column prop="cates" label="分类" align="center" width="180" :formatter="filterCates" />
 
           <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
             <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
@@ -158,7 +160,7 @@
             <template slot-scope="{row}">
               <el-row type="flex" justify="center">
                 <el-button type="text" size="small" @click="recover(row.id)">恢复</el-button>
-                <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
+                <el-button type="text" size="small" style="color:#F56C6C" @click="forceDel(row.id)">删除</el-button>
               </el-row>
             </template>
           </el-table-column>
@@ -175,6 +177,7 @@
 
 <script>
 import { delArticleAPI, getAllArticleAPI } from '@/api/article'
+import { getAllCateAPI } from '@/api/cate'
 import { customAPI } from '@/api/senior'
 export default {
   data() {
@@ -186,13 +189,14 @@ export default {
         draftBin: [], // 草稿箱文章
         recycleBin: [] // 回收站文章
       },
-      DialogVisible: false,
-      activeName: 'essay',
+      cates: [], // 分类列表
+      activeName: 'article',
       loading: false
     }
   },
   created() {
     this.get()
+    this.getCate()
   },
   methods: {
     // 获取文章列表
@@ -247,6 +251,37 @@ export default {
 
       this.loading = false
     },
+    // 获取分类列表
+    async getCate() {
+      const { data, message, success } = await getAllCateAPI()
+      if (success) {
+        this.cates = data
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 过滤分类
+    filterCates(row, col, val) {
+      const ids = val.split(',')
+      const catesList = []
+
+      // 通过分类id筛选出对应的分类名称
+      ids.filter(id => {
+        const item = this.cates.filter(item => String(item.id) === id)
+        item && catesList.push(...item)
+      })
+
+      if (catesList.length !== 0) {
+        const cate = []
+        catesList.filter(item => {
+          cate.push(item.title)
+        })
+
+        return cate.join('，')
+      }
+
+      return '未指定分类'
+    },
     // 删除文章
     del(id) {
       this.$confirm('你确定要删除吗？', '提示', {
@@ -272,12 +307,6 @@ export default {
             })
           }
         })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
     },
     // 通过审核
     async pass(id) {
@@ -302,6 +331,25 @@ export default {
       } else {
         this.$message.error(message)
       }
+    },
+    // 强制删除
+    async forceDel(id) {
+      this.$confirm('删除后将无可逆转，你确定要删除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          const sql = `delete from articles where id = ${id}`
+          const { message, success } = await customAPI({ sql })
+
+          if (success) {
+            this.$message.success('删除成功')
+            this.get()
+          } else {
+            this.$message.error(message)
+          }
+        })
     },
     // 跳转到编辑页
     jump(id) {

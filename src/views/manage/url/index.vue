@@ -167,12 +167,6 @@ export default {
             this.$message.error(message)
           }
         })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
     },
     // 提交
     async btnOk() {

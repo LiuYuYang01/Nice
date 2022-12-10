@@ -97,7 +97,7 @@
         <div class="comments">
           <!-- 头部 -->
           <div class="head">
-            <div class="title">评论框</div>
+            <div class="title">留言框</div>
           </div>
 
           <!-- 评论列表 -->

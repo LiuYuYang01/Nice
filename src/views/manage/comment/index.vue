@@ -293,12 +293,6 @@ export default {
             this.$message.error(message)
           }
         })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
     },
     // 评论回显
     async emit(id) {
@@ -359,12 +353,6 @@ export default {
             } else {
               this.$message.error(message)
             }
-          })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
-            })
           })
       }
     },

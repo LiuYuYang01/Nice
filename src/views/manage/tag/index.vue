@@ -127,12 +127,6 @@ export default {
             this.$message.error(message)
           }
         })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
     },
     // 获取分类列表
     async getAllTagAPI() {
