@@ -15,14 +15,17 @@
         </el-row>
       </el-row>
 
+      <!-- 文章列表 -->
       <el-tab-pane name="essay">
-        <span slot="label"><i class="el-icon-s-grid" /> 文章列表</span>
+        <span slot="label">
+          <i class="el-icon-s-grid" /> 文章列表
+        </span>
 
-        <!-- 用户列表信息 -->
-        <el-table :data="essayData" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+        <!-- 文章列表 -->
+        <el-table v-loading="loading" :data="articleForm.list" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
           <el-table-column prop="title" label="标题" align="center" width="400">
             <template slot-scope="{row}">
-              <a href="#/write" class="hoverTitle">{{ row.title }}</a>
+              <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
             </template>
           </el-table-column>
 
@@ -38,9 +41,7 @@
             <template slot-scope="{row}">
               <el-row type="flex" justify="center">
                 <!-- 为什么点击编辑跳转到编辑页，然后再回退到之前的页面就会报错？ -->
-                <!-- 为什么点击编辑跳转到编辑页，然后再回退到之前的页面就会报错？ -->
-                <!-- 为什么点击编辑跳转到编辑页，然后再回退到之前的页面就会报错？ -->
-                <el-button type="text" size="small" @click="$router.push('/write')">编辑</el-button>
+                <el-button type="text" size="small" @click="$router.push(`/write?id=${row.id}`)">编辑</el-button>
                 <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
               </el-row>
             </template>
@@ -53,132 +54,223 @@
         </el-row>
       </el-tab-pane>
 
+      <!-- 待审核文章 -->
       <el-tab-pane name="audit">
         <span slot="label">
           <i class="el-icon-c-scale-to-original" /> 待审核
-          <el-badge value="1" />
+          <el-badge :value="articleForm.audit.length" />
         </span>
 
-        <span>待审核</span>
+        <!-- 审核列表 -->
+        <el-table v-loading="loading" :data="articleForm.audit" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+          <el-table-column prop="title" label="标题" align="center" width="400">
+            <template slot-scope="{row}">
+              <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="author" label="作者" align="center" sortable width="180" />
+
+          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+
+          <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
+            <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
+          </el-table-column>
+
+          <el-table-column fixed="right" label="操作" width="150" align="center">
+            <template slot-scope="{row}">
+              <el-row type="flex" justify="center">
+                <el-button type="text" size="small" @click="pass(row.id)">通过</el-button>
+                <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
+              </el-row>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- 分页 -->
+        <el-row type="flex" justify="end" style="margin-top:40px">
+          <el-pagination background layout="prev, pager, next" :total="1000" />
+        </el-row>
       </el-tab-pane>
 
+      <!-- 草稿箱 -->
       <el-tab-pane name="draft">
         <span slot="label">
           <i class="el-icon-receiving" /> 草稿箱
-          <el-badge value="3" />
+          <el-badge :value="articleForm.draftBin.length" />
         </span>
 
-        <span>草稿箱</span>
+        <!-- 文章列表 -->
+        <el-table v-loading="loading" :data="articleForm.draftBin" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+          <el-table-column prop="title" label="标题" align="center" width="400">
+            <template slot-scope="{row}">
+              <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="author" label="作者" align="center" sortable width="180" />
+
+          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+
+          <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
+            <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
+          </el-table-column>
+
+          <el-table-column fixed="right" label="操作" width="150" align="center">
+            <template slot-scope="{row}">
+              <el-row type="flex" justify="center">
+                <el-button type="text" size="small" @click="$router.push(`/write?id=${row.id}`)">编辑</el-button>
+                <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
+              </el-row>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- 分页 -->
+        <el-row type="flex" justify="end" style="margin-top:40px">
+          <el-pagination background layout="prev, pager, next" :total="1000" />
+        </el-row>
       </el-tab-pane>
 
+      <!-- 回收站 -->
       <el-tab-pane name="reclaim">
         <span slot="label">
           <i class="el-icon-delete" /> 回收站
         </span>
 
-        <span>回收站</span>
+        <!-- 文章列表 -->
+        <el-table v-loading="loading" :data="articleForm.recycleBin" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+          <el-table-column prop="title" label="标题" align="center" width="400">
+            <template slot-scope="{row}">
+              <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="author" label="作者" align="center" sortable width="180" />
+
+          <el-table-column prop="cate" label="分类" align="center" sortable width="180" />
+
+          <el-table-column prop="date" label="发布日期" align="center" sortable width="300">
+            <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
+          </el-table-column>
+
+          <el-table-column fixed="right" label="操作" width="150" align="center">
+            <template slot-scope="{row}">
+              <el-row type="flex" justify="center">
+                <el-button type="text" size="small" @click="recover(row.id)">恢复</el-button>
+                <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
+              </el-row>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- 分页 -->
+        <el-row type="flex" justify="end" style="margin-top:40px">
+          <el-pagination background layout="prev, pager, next" :total="1000" />
+        </el-row>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
+import { delArticleAPI, getAllArticleAPI } from '@/api/article'
+import { customAPI } from '@/api/senior'
 export default {
   data() {
     return {
       search: '',
-      essayData: [
-        {
-          id: 1,
-          title: '尤雨溪回应：Vite 真的比 Turbopack 慢 10 倍吗？',
-          author: '晨曦时梦见兮',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 2,
-          title: '程序员需不需要懂业务、懂市场？2022掘金未来大会前瞻',
-          author: '稀土君',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 3,
-          title: 'Web3.0对前端很友好？',
-          author: 'hawleyHuo',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 4,
-          title: 'Flutter 工程化框架选择 — add-to-app 的指路明灯',
-          author: '恋猫de小郭',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 5,
-          title: '“无架构”和“MVP”都救不了业务代码，MVVM能力挽狂澜？（一）',
-          author: '唐子玄',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 6,
-          title: '前端JS手写编程题库，终于开源了 Github',
-          author: 'sunny',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 7,
-          title: 'Nest.js进阶系列五： Node.js中使用Redis原来这么简单',
-          author: 'ikoala',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 8,
-          title: 'Java 面试题：ArrayList 可以完全替代数组吗？',
-          author: '彭旭锐',
-          cate: 'Java',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 9,
-          title: 'React 之 Refs 的使用和 forwardRef 的源码解读',
-          author: '冴羽',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        },
-        {
-          id: 10,
-          title: '全栈开发—Vue+Element+Koa 实战发布平台CRUD！',
-          author: '井柏然',
-          cate: '大前端',
-          date: 'Fri Nov 03 2022 22:03:31 GMT+0800 (中国标准时间)'
-        }
-      ],
+      articleForm: {
+        list: [], // 正常文章
+        audit: [], // 待审核文章
+        draftBin: [], // 草稿箱文章
+        recycleBin: [] // 回收站文章
+      },
       DialogVisible: false,
-      activeName: 'essay'
+      activeName: 'essay',
+      loading: false
     }
   },
+  created() {
+    this.get()
+  },
   methods: {
+    // 获取文章列表
+    async get() {
+      this.loading = true
+
+      const list = []
+      const audit = []
+      const draftBin = []
+      const recycleBin = []
+
+      const { data, message, success } = await getAllArticleAPI()
+      if (success) {
+        // 筛选文章
+        // item.is_audit = 0 代表待审核文章
+        // item.is_audit = 1 代表审核通过文章
+
+        // item.is_draft = 0 代表正常文章
+        // item.is_draft = 1 代表草稿文章
+
+        // item.is_delete = 0 代表正常文章
+        // item.is_delete = 1 代表回收站文章
+        data.filter((item) => {
+          // 如果没有被删除并且审核成功而且不是草稿就正常显示文章
+          if (item.is_delete === 0 && item.is_audit === 1 && item.is_draft === 0) {
+            list.push(item)
+          }
+
+          // 筛选待审核的文章
+          if (item.is_audit === 0) {
+            audit.push(item)
+          }
+
+          // 筛选草稿箱的文章
+          if (item.is_draft === 1) {
+            draftBin.push(item)
+          }
+
+          // 筛选回收站的文章
+          if (item.is_delete === 1) {
+            recycleBin.push(item)
+          }
+        })
+
+        this.articleForm.list = list
+        this.articleForm.audit = audit
+        this.articleForm.draftBin = draftBin
+        this.articleForm.recycleBin = recycleBin
+      } else {
+        this.$message.error(message)
+      }
+
+      this.loading = false
+    },
+    // 删除文章
     del(id) {
       this.$confirm('你确定要删除吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(() => {
-          this.essayData.filter((item, index) => {
-            if (item.id === id) this.essayData.splice(index, 1)
-          })
+        .then(async() => {
+          console.log(id)
+          const { message, success } = await delArticleAPI({ id })
+          if (success) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
 
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
+            // 获取最新数据
+            this.get()
+          } else {
+            this.$message({
+              type: 'error',
+              message
+            })
+          }
         })
         .catch(() => {
           this.$message({
@@ -186,6 +278,34 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+    // 通过审核
+    async pass(id) {
+      const sql = `update articles set is_audit = 1 where id = ${id}`
+      const { message, success } = await customAPI({ sql })
+
+      if (success) {
+        this.$message.success('审核成功')
+        this.get()
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 恢复文章
+    async recover(id) {
+      const sql = `update articles set is_delete = 0 where id = ${id}`
+      const { message, success } = await customAPI({ sql })
+
+      if (success) {
+        this.$message.success('恢复成功')
+        this.get()
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 跳转到编辑页
+    jump(id) {
+      return `#/write?id=${id}`
     }
   }
 }

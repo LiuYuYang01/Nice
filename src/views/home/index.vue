@@ -121,7 +121,11 @@
         </div>
       </el-col>
 
-      <el-col :span="12">3</el-col>
+      <el-col :span="12">
+        <div class="image">
+          <img :src="require('@/assets/svg/programming.svg')" alt="">
+        </div>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -266,7 +270,7 @@ export default {
 .content {
   position: static;
   width: 100%;
-  padding: 50px;
+  padding: 25px 50px;
   padding-top: 40px;
   background-color: #f9f9f9;
 
@@ -343,7 +347,8 @@ export default {
 
   // 功能
   .function {
-    .el-col-6 {
+    .el-col-6,
+    .el-col-12 {
       overflow: hidden;
       width: 24%;
       height: 400px;
@@ -352,6 +357,10 @@ export default {
       background-color: #fff;
       border-radius: 3px;
       box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+    }
+
+    .el-col-12 {
+      width: 49.3%;
     }
 
     // 标题
@@ -533,6 +542,16 @@ export default {
           background-color: #ddd;
           border-radius: 3px;
         }
+      }
+    }
+
+    // 图片
+    .image {
+      background-color: #fff;
+      text-align: center;
+
+      img {
+        width: 360px;
       }
     }
   }

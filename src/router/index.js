@@ -12,6 +12,7 @@ import manage from '@/router/modules/manage'
 import users from '@/router/modules/users'
 import extend from '@/router/modules/extend'
 import material from '@/router/modules/material'
+import my from '@/router/modules/my/'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -56,7 +57,8 @@ export const constantRoutes = [
   users,
   extend,
   material,
-  setting
+  setting,
+  my
 ]
 
 const createRouter = () =>

@@ -6,8 +6,29 @@
     <el-row type="flex" justify="space-between">
       <!-- 编辑器 -->
       <el-col :span="17">
-        <el-input v-model="title" placeholder="给这篇文章定义个标题吧！" prefix-icon="el-icon-edit" style="margin-bottom:20px" />
-        <v-md-editor v-model="text" height="600px" mode="edit" />
+        <el-input v-model="articleForm.title" placeholder="给这篇文章定义个标题吧！" prefix-icon="el-icon-edit" style="margin-bottom:20px" />
+        <v-md-editor v-model="articleForm.content" height="600px" mode="edit" />
+
+        <!-- 高级设置 -->
+        <div class="pullDown" style="margin-top: 10px">
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="高级设置" icon="el-icon-menu">
+              <el-row>
+                <el-col>
+                  <div class="title">文章描述</div>
+                  <el-input v-model="articleForm.description" type="textarea" :rows="2" placeholder="请输入文章描述1 ~ 100字" autosize />
+                </el-col>
+
+                <el-col>
+                  <div class="title">文章封面</div>
+                  <el-input v-model="articleForm.cover" placeholder="请输入内容" class="input-with-select">
+                    <el-button slot="append" icon="el-icon-receiving" />
+                  </el-input>
+                </el-col>
+              </el-row>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
       </el-col>
 
       <!-- 发布 -->
@@ -16,14 +37,25 @@
           <!-- 分类列表 -->
           <div class="cate">
             <h4 class="title">分类列表</h4>
-            <el-tree v-loading="cateLoading" :data="cateList" show-checkbox :props="defaultProps" style="padding:0 20px" @check-change="handleNodeClick" />
+            <el-tree
+              ref="tree"
+              v-loading="cateLoading"
+              style="padding:0 20px"
+              node-key="id"
+              show-checkbox
+              :data="cateList"
+              :props="{children:'children',label:'title'}"
+              :default-expanded-keys="[15]"
+              :default-checked-keys="[articleForm.cates]"
+              @check-change="handleCheckChange"
+            />
           </div>
 
           <!-- 时间设置 -->
           <div class="timeSet">
             <h4 class="title">发布时间</h4>
             <el-row type="flex" justify="center">
-              <el-date-picker v-model="timeDate" type="datetime" placeholder="选择日期时间" default-time="12:00:00" size="small" />
+              <el-date-picker v-model="articleForm.date" type="datetime" placeholder="选择日期时间" default-time="12:00:00" size="small" value-format="yyyy-MM-dd HH:mm:ss" />
             </el-row>
           </div>
 
@@ -35,7 +67,16 @@
             <el-row>
               <el-col>
                 <!-- <el-input v-model="tagValut" size="mini" placeholder="添加标签" @keyup.enter.native="addTags" /> -->
-                <el-autocomplete v-model="tagValut" class="inline-input" size="mini" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect" @keyup.enter.native="addTags" />
+                <el-autocomplete
+                  v-model="articleForm.tags"
+                  class="inline-input"
+                  size="mini"
+                  :fetch-suggestions="querySearch"
+                  placeholder="请输入内容"
+                  :trigger-on-focus="false"
+                  @select="handleSelect"
+                  @keyup.enter.native="addTags"
+                />
               </el-col>
             </el-row>
 
@@ -50,28 +91,29 @@
           </div>
 
           <!-- 扩展设置 -->
-          <div class="extendSet">
+          <div class="pullDown">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="扩展设置" icon="el-icon-menu">
                 <el-row>
                   <el-col>
                     <label>
                       <span>公开：</span>
-                      <el-switch v-model="options.public" active-color="#727cf5" inactive-color="#d7d7d7" />
+                      <el-switch v-model="articleForm.is_public" active-color="#727cf5" inactive-color="#d7d7d7" :active-value="1" :inactive-value="0">/>
+                      </el-switch>
                     </label>
                   </el-col>
 
-                  <el-col>
+                  <!-- <el-col>
                     <label>
                       <span>加密：</span>
-                      <el-switch v-model="options.password" active-color="#727cf5" inactive-color="#d7d7d7" />
+                      <el-switch v-model="articleForm.password" active-color="#727cf5" inactive-color="#d7d7d7" />
                     </label>
-                  </el-col>
+                  </el-col> -->
 
                   <el-col>
                     <label>
                       <span>目录：</span>
-                      <el-switch v-model="options.directory" active-color="#727cf5" inactive-color="#d7d7d7" />
+                      <el-switch v-model="articleForm.is_catalog" active-color="#727cf5" inactive-color="#d7d7d7" :active-value="1" :inactive-value="0" />
                     </label>
                   </el-col>
                 </el-row>
@@ -81,8 +123,8 @@
 
           <!-- 发布文章 -->
           <div class="publish">
-            <div @click="isOk">发布文章</div>
-            <div>保存为草稿</div>
+            <div @click="isOk">{{ publishORsave }}</div>
+            <div @click="draft">保存为草稿</div>
           </div>
         </div>
       </el-col>
@@ -95,40 +137,51 @@
 
 <script>
 import { getAllCateAPI } from '@/api/cate'
+import { addArticleAPI, updAtearticleAPI, getArticleAPI } from '@/api/article'
 import { transListToTreeData } from '@/utils'
+import { dateFormat } from '@/filter'
+// eslint-disable-next-line no-unused-vars
 import VueMarkdownEditor, { xss } from '@kangc/v-md-editor'
 export default {
   name: 'Write',
   data() {
     return {
-      title: '',
-      text: '',
+      id: 0,
       html: '',
       cateLoading: false,
+      cate: [],
       cateList: [],
-      defaultProps: {
-        children: 'children',
-        label: 'title'
-      },
       timeDate: '',
-      options: {
-        public: true,
-        hidden: false,
-        password: false,
-        directory: false
+      articleForm: {
+        title: '', // 文章标题
+        content: '', // 文章内容
+        author: '刘宇阳', // 作者
+        cover: '', // 文章封面
+        description: '', // 文章描述
+        cates: '', // 所在分类
+        tags: '', // 所属标签
+        is_public: 1, // 是否公开
+        is_catalog: 0, // 是否开启目录
+        is_draft: 0, // 是否草稿
+        is_audit: 0, // 是否审核通过
+        is_delete: 0, // 是否删除
+        date: '' // 时间
       },
+      publishORsave: '',
       tagsItems: [],
       tags: [],
-      tagValut: '',
       // el-collapse设置是否默认展开
       activeNames: ['unfold'],
       restaurants: []
     }
   },
   // 渲染tabs标签列表
-  mounted() {
-    this.getAllCateAPI()
+  async mounted() {
+    this.id = this.$route.query.id
+
+    await this.getAllCateAPI()
     this.restaurants = this.loadAll()
+    this.echoData()
   },
   methods: {
     // 获取分类列表
@@ -136,26 +189,52 @@ export default {
       this.cateLoading = true
 
       const { data } = await getAllCateAPI()
+
+      this.cate = data
       this.cateList = transListToTreeData(data, 0)
 
       this.cateLoading = false
-      console.log(this.cateList)
+      console.log('分类列表：', this.cateList)
     },
     // 找出被勾选的分类
-    handleNodeClick(val) {
-      console.log(val)
+    handleCheckChange() {
+      const res = this.$refs.tree.getCheckedNodes()
+      const arr = []
+      res.forEach((item) => {
+        arr.push(item.id)
+      })
+      const menuArr = this.unique(arr) // 去除重复的节点
+
+      this.articleForm.cates = menuArr.join(',')
+      console.log(this.articleForm.cates)
+    },
+    // 数组去重
+    unique(arr) {
+      const newArr = []
+      const len = arr.length
+      for (let i = 0; i < len; i++) {
+        if (newArr.indexOf(arr[i]) === -1) {
+          newArr.push(arr[i])
+        }
+      }
+      return newArr
     },
     // 标签远程搜索
     querySearch(queryString, cb) {
       var restaurants = this.restaurants
-      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+      var results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
     // 标签过滤
     createFilter(queryString) {
       return (restaurant) => {
-        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        )
       }
     },
     // 所有标签
@@ -178,8 +257,8 @@ export default {
     addTags() {
       // 添加标签
       const add = (type) => {
-        this.tagsItems.push({ type, label: this.tagValut })
-        this.tagValut = ''
+        this.tagsItems.push({ type, label: this.articleForm.tags })
+        this.articleForm.tags = ''
       }
 
       if (this.tagsItems.length === 0) {
@@ -196,15 +275,73 @@ export default {
         this.$message.error('最多只能添加5个标签~')
       }
     },
-    // 发布文章
-    isOk() {
-      // 将 MarkDown 语法解析为 html
-      const html = xss.process(
-        VueMarkdownEditor.themeConfig.markdownParser.render(this.text)
-      )
+    // 发布 | 编辑文章
+    async isOk() {
+      // 格式化时间
+      this.articleForm.date = dateFormat(this.articleForm.date)
 
-      this.html = html
-      console.log(this.html)
+      // 有id就是编辑，无id就是发布文章
+      if (this.id) {
+        const { message, success } = await updAtearticleAPI(this.articleForm)
+
+        if (success) {
+          this.$router.push('/')
+          this.$router.push(`/manage/article`)
+
+          this.$message.success('编辑文章成功')
+        } else {
+          this.$message.error(message)
+        }
+      } else {
+        const { message, success } = await addArticleAPI(this.articleForm)
+
+        if (success) {
+          this.$router.push('/')
+          this.$router.push(`/manage/article`)
+
+          this.$message.success('发布文章成功')
+        } else {
+          this.$message.error(message)
+        }
+      }
+
+      // 将 MarkDown 语法解析为 html
+      // const html = xss.process(
+      //   VueMarkdownEditor.themeConfig.markdownParser.render(this.text)
+      // )
+
+      // this.html = html
+      // console.log(this.html)
+    },
+    // 回显数据
+    async echoData() {
+      if (this.id) {
+        this.publishORsave = '编辑文章'
+
+        const { data, message, success } = await getArticleAPI(this.id)
+        if (success) {
+          this.articleForm = data
+        } else {
+          this.$message.error(message)
+        }
+      } else {
+        this.publishORsave = '发布文章'
+      }
+    },
+    // 保存为草稿
+    async draft() {
+      this.articleForm.is_draft = 1
+      const { message, success } = await updAtearticleAPI(this.articleForm)
+      if (success) {
+        this.$router.push('/')
+        this.$router.push(`/manage/article`)
+
+        this.$message.success('保存为草稿成功')
+      } else {
+        this.$message.error(message)
+      }
+
+      console.log(this.articleForm)
     }
   }
 }
@@ -315,10 +452,25 @@ export default {
   margin-top: -2px;
 }
 
-.extendSet {
+.pullDown {
   .el-col-24 {
     margin: 10px 20px;
   }
+}
+
+::v-deep .pullDown .el-textarea__inner {
+  width: 95.5%;
+  min-height: 80px !important;
+  padding: 10px;
+}
+
+::v-deep .pullDown .el-input-group {
+  width: 95.5%;
+}
+
+::v-deep .pullDown .title {
+  font-size: 15px;
+  margin-bottom: 5px;
 }
 
 ::v-deep .el-collapse-item__content {

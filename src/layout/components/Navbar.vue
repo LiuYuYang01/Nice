@@ -7,6 +7,17 @@
       <!-- <span class="breadBtn">正式版</span> -->
     </div>
 
+    <!-- 快捷菜单 -->
+    <div class="shortcutMenu">
+      <div>
+        <a href="https://github.com/LiuYuYang01/Nice" target="_blank">Github</a>
+      </div>
+
+      <div>
+        <a href="http://liuyuyang.net" target="_blank">作者博客</a>
+      </div>
+    </div>
+
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
@@ -15,11 +26,13 @@
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item> 主页 </el-dropdown-item>
+            <el-dropdown-item> 仪表盘 </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
+
+          <router-link to="/my">
+            <el-dropdown-item> 个人设置 </el-dropdown-item>
+          </router-link>
+
           <el-dropdown-item divided @click.native="logout">
             <span style="display: block">退出登录</span>
           </el-dropdown-item>
@@ -149,6 +162,26 @@ export default {
     line-height: 30px;
     border-radius: 10px;
     margin-left: 15px;
+  }
+}
+
+// 快捷导航
+.shortcutMenu {
+  position: absolute;
+  top: 50%;
+  right: 130px;
+  transform: translateY(-50%);
+  display: flex;
+  color: #666;
+  font-size: 14px;
+
+  div {
+    margin-left: 30px;
+    transition: all 0.3s;
+
+    &:hover{
+      color: #727cf5;
+    }
   }
 }
 </style>

@@ -6,7 +6,8 @@ import { Message } from 'element-ui'
 // 状态
 const state = {
   token: getToken(),
-  avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+  avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+  userInfo: {}
 }
 
 // 执行同步
@@ -42,6 +43,9 @@ const actions = {
     removeToken()
     // 重置路由
     resetRouter()
+
+    // 恢复侧边栏默认主题
+    localStorage.setItem('currentTopic', '2')
   }
 }
 

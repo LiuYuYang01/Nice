@@ -350,7 +350,7 @@ export default {
         })
           .then(async() => {
             const { message, success } = await batchDelCommentAPI({
-              ids: this.selectComment
+              ids: this.selectComment.join(',')
             })
             if (success) {
               this.$message.success('批量删除成功')
