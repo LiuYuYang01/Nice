@@ -1,4 +1,11 @@
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import {
+  getToken,
+  setToken,
+  removeToken,
+  setTime,
+  getUser,
+  setUser
+} from '@/utils/auth'
 import { loginAPI } from '@/api/user'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
@@ -6,15 +13,18 @@ import { Message } from 'element-ui'
 // 状态
 const state = {
   token: getToken(),
-  avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-  userInfo: {}
+  avatar: getUser() && JSON.parse(getUser()).avatar || 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+  userInfo: getUser()
 }
 
 // 执行同步
 const mutations = {
   setToken(state, payload) {
-    state.token = payload
-    setToken(payload)
+    state.token = payload.token
+    state.userInfo = payload.data
+
+    setToken(payload.token)
+    setUser(payload.data)
   },
   // 清除token
   removeToken(state) {
@@ -26,13 +36,16 @@ const mutations = {
 const actions = {
   // 登录功能
   async loginActions({ commit }, payload) {
-    const res = await loginAPI(payload)
+    const { data, message, success, token } = await loginAPI(payload)
 
-    if (res && res.success) {
-      commit('setToken', res.token)
+    if (success) {
+      commit('setToken', { token, data })
       Message.success('恭喜你，登录成功~')
+
+      // 设置时间戳
+      setTime() // 将当前的最新时间写入缓存
     } else {
-      Message.error('登录失败~')
+      Message.error(message)
     }
   },
   // 退出登录

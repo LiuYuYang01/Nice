@@ -20,7 +20,7 @@
 
         <!-- 评论列表 -->
         <el-table ref="multipleTable" v-loading="loading" border :data="commentsData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" />
+          <el-table-column type="selection" width="55" align="center" />
           <el-table-column prop="name" label="用户" width="130" align="center" show-overflow-tooltip />
           <el-table-column prop="email" label="邮箱" width="200" align="center" show-overflow-tooltip />
           <el-table-column label="评论内容" width="300" align="center" show-overflow-tooltip>
@@ -63,7 +63,7 @@
       </el-tab-pane>
 
       <!-- 审核 -->
-      <el-tab-pane name="draft">
+      <el-tab-pane name="audit">
         <span slot="label">
           <i class="el-icon-c-scale-to-original" /> 待审核
           <el-badge :value="auditData.length" />
@@ -211,6 +211,10 @@ export default {
     }
   },
   created() {
+    if (this.$route.query.activeName) {
+      this.activeName = this.$route.query.activeName
+    }
+
     this.getAllCommentAPI()
   },
   methods: {

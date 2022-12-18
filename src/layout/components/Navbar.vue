@@ -3,7 +3,7 @@
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <div class="app-breadcrumb">
-      也许将会是最强的CMS管理系统
+      也许将会是最强的后台管理系统
       <!-- <span class="breadBtn">正式版</span> -->
     </div>
 
@@ -21,7 +21,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img :src="avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -45,13 +45,23 @@
 <script>
 import { mapGetters } from 'vuex'
 import Hamburger from '@/components/Hamburger'
+import { getUser } from '@/utils/auth'
 
 export default {
   components: {
     Hamburger
   },
+  data() {
+    return {
+      avatar: ''
+    }
+  },
   computed: {
-    ...mapGetters(['sidebar', 'avatar'])
+    // ...mapGetters(['sidebar', 'avatar'])
+    ...mapGetters(['sidebar'])
+  },
+  created() {
+    this.avatar = getUser() && JSON.parse(getUser()).avatar
   },
   methods: {
     toggleSideBar() {
@@ -183,5 +193,9 @@ export default {
       color: #727cf5;
     }
   }
+}
+
+.navbar .right-menu .avatar-container .avatar-wrapper .user-avatar{
+  border-radius: 50%;
 }
 </style>

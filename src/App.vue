@@ -69,6 +69,7 @@ export default {
   name: 'App',
   data() {
     return {
+      id: 0,
       drawer: false,
       defaultStateImg: require('./assets/theme/TY.png'),
       defaultState: 1,

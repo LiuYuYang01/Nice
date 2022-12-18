@@ -27,6 +27,33 @@ export function updAtearticleAPI(data) {
   })
 }
 
+// 审核文章
+export function auditAPI(data) {
+  return request({
+    url: '/article/audit',
+    method: 'POST',
+    data
+  })
+}
+
+// 恢复文章
+export function recoverAPI(data) {
+  return request({
+    url: '/article/recover',
+    method: 'POST',
+    data
+  })
+}
+
+// 强制删除文章
+export function forceDelAPI(data) {
+  return request({
+    url: '/article/forceDel',
+    method: 'POST',
+    data
+  })
+}
+
 // 获取文章
 export function getArticleAPI(id) {
   return request({
@@ -38,5 +65,14 @@ export function getArticleAPI(id) {
 export function getAllArticleAPI() {
   return request({
     url: '/article/getAll'
+  })
+}
+
+// 批量操作数据
+export function batchAPI(data) {
+  return request({
+    url: '/article/batch',
+    method: 'POST',
+    data
   })
 }

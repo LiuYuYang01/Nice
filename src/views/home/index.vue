@@ -1,7 +1,14 @@
 <template>
   <div class="content">
     <el-card class="box-card welcome">
-      <h2 class="title text-gradient">Hello! 新一代CMS管理系统 </h2>
+      <div class="userImage">
+        <img :src="userInfo && userInfo.avatar || require('@/assets/Nice/icon1.jpg')" alt="">
+      </div>
+
+      <div class="info">
+        <h2 class="title text-gradient">Hello {{ userInfo && userInfo.nickname || '帅哥、美女' }} ! 欢迎使用 Nice 后台管理系统 </h2>
+        <p><i class="el-icon-edit" /> {{ userInfo && userInfo.signature || '也许将会是最强的后台管理系统' }}</p>
+      </div>
     </el-card>
 
     <!-- 可视化图表 -->
@@ -23,12 +30,12 @@
         <h3>今日待办</h3>
         <!-- 待办 -->
         <div class="toBeDone">
-          <div class="item">
+          <div class="item" @click="$router.push('manage/comment?activeName=audit')">
             <span>待审评论</span>
             <h4>53</h4>
           </div>
 
-          <div class="item">
+          <div class="item" @click="$router.push('manage/article?activeName=audit')">
             <span>待审文章</span>
             <h4>16</h4>
           </div>
@@ -49,7 +56,7 @@
       <el-col :span="6">
         <h3>项目介绍</h3>
         <p class="message">
-          <span style="color:#727cf5">Nice</span> 是一款新一代的CMS管理系统，在未来不仅仅是CMS🎉
+          <span style="color:#727cf5">Nice</span> 是一款新一代的后台管理系统🎉
           <br>
           我们一直坚持以极致的交互带给你不一样的体验，复杂的功能留给我们，简单的体验留给用户🪄
         </p>
@@ -133,6 +140,7 @@
 <script>
 import visits from './visits'
 import user from './user'
+import { getUser } from '@/utils/auth'
 export default {
   name: 'Home',
   components: {
@@ -141,6 +149,8 @@ export default {
   },
   data() {
     return {
+      // 用户信息
+      userInfo: {},
       // 任务列表
       toDoList: [
         {
@@ -249,6 +259,9 @@ export default {
       immediate: true
     }
   },
+  created() {
+    this.userInfo = getUser() && JSON.parse(getUser())
+  },
   methods: {
     add() {
       console.log(this.selectList)
@@ -274,13 +287,39 @@ export default {
   padding-top: 40px;
   background-color: #f9f9f9;
 
-  .welcome {
+  .welcome ::v-deep {
     margin-bottom: 20px;
     box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
 
-    > .title {
-      margin: 0;
-      margin-bottom: 30px;
+    .el-card__body {
+      display: flex;
+      align-items: center;
+    }
+
+    .userImage {
+      overflow: hidden;
+      width: 100px;
+      height: 100px;
+      margin-right: 30px;
+      border-radius: 50%;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .info {
+      .title {
+        margin: 0;
+        // margin-bottom: 30px;
+      }
+
+      p {
+        margin: 0;
+        margin-top: 15px;
+        color: #888;
+      }
     }
   }
 
@@ -318,6 +357,12 @@ export default {
           margin: 0 10px 10px 0;
           text-align: center;
           background-color: #f8f8f8;
+          transition: all 0.3s;
+          cursor: pointer;
+
+          &:hover {
+            background: #f2f3fe;
+          }
 
           &:nth-of-type(2n) {
             margin-right: 0;
@@ -333,14 +378,21 @@ export default {
             margin: 0;
             font-size: 25px;
             color: #727cf5;
+            transition: all 0.3s;
+
+            &:hover {
+              transform: scale(1.1);
+            }
           }
         }
       }
 
       .message {
-        margin: 50px 30px;
-        line-height: 30px;
+        margin: 40px 30px;
+        margin-bottom: 0;
+        line-height: 35px;
         font-size: 15px;
+        color: #333;
       }
     }
   }

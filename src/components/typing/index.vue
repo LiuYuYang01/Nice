@@ -1,6 +1,6 @@
 <template>
   <el-card class="box-card welcome">
-    <h2 class="title text-gradient">Hello! 新一代CMS管理系统 </h2>
+    <h2 class="title text-gradient">Hello! 新一代后台管理系统 </h2>
   </el-card>
 </template>
 

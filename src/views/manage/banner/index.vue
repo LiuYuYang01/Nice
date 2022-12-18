@@ -4,7 +4,7 @@
     <el-row>
       <el-col :span="9">
         <!-- 新增轮播图 -->
-        <el-form ref="banner" :model="bannerForm" :rules="bannerVerify" label-width="80px" style="margin-top:15px">
+        <el-form ref="bannerForm" :model="bannerForm" :rules="bannerVerify" label-width="80px" style="margin-top:15px">
           <el-form-item label="标题" prop="title">
             <el-input v-model="bannerForm.title" />
           </el-form-item>
@@ -158,7 +158,7 @@ export default {
         date: ''
       }
       this.fileList = []
-      this.$refs.banner.resetFields()
+      this.$refs.bannerForm.resetFields()
     },
     // 获取轮播图列表
     async getAllBannerAPI() {
@@ -223,30 +223,48 @@ export default {
     // 新增 or 编辑
     async btnOk() {
       if (this.title === '新增轮播图') {
-        const { message, success } = await addBannerAPI(this.bannerForm)
+        this.$refs.bannerForm.validate(async(isOk) => {
+          if (isOk) {
+            const { message, success } = await addBannerAPI(this.bannerForm)
 
-        if (success) {
-          this.$message.success('新增成功')
+            if (success) {
+              this.$message.success('新增成功')
 
-          // 获取最新数据
-          this.getAllBannerAPI()
-          // 初始化
-          this.format()
-        } else {
-          this.$message.error(message)
-        }
+              // 获取最新数据
+              this.getAllBannerAPI()
+              // 初始化
+              this.format()
+            } else {
+              this.$message.error(message)
+            }
+          } else {
+            this.$notify.error({
+              title: '错误',
+              message: '表单校验失败！'
+            })
+          }
+        })
       } else if (this.title === '编辑轮播图') {
-        const { message, success } = await updateBannerAPI(this.bannerForm)
+        this.$refs.bannerForm.validate(async(isOk) => {
+          if (isOk) {
+            const { message, success } = await updateBannerAPI(this.bannerForm)
 
-        if (success) {
-          this.$message.success('编辑成功')
+            if (success) {
+              this.$message.success('编辑成功')
 
-          this.getAllBannerAPI()
-          // 初始化
-          this.format()
-        } else {
-          this.$message.error(message)
-        }
+              this.getAllBannerAPI()
+              // 初始化
+              this.format()
+            } else {
+              this.$message.error(message)
+            }
+          } else {
+            this.$notify.error({
+              title: '错误',
+              message: '表单校验失败！'
+            })
+          }
+        })
       }
     },
     // 图片表单失去焦点触发
@@ -277,7 +295,7 @@ export default {
       }
 
       // 限制最大上传
-      const maxSize = 50 * 1024 * 1024
+      const maxSize = 5 * 1024 * 1024
       if (file.size > maxSize) {
         this.$message.error('图片的最大限制为5MB')
         return false

@@ -42,8 +42,8 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="dateCreated" label="创建日期" align="center" sortable width="180">
-        <template slot-scope="{row}">{{ row.dateCreated | dateFormat }}</template>
+      <el-table-column prop="date" label="创建日期" align="center" sortable width="180">
+        <template slot-scope="{row}">{{ row.date | dateFormat }}</template>
       </el-table-column>
 
       <el-table-column fixed="right" label="操作" width="150" align="center">
@@ -120,7 +120,7 @@ export default {
         // identity: '',
         nickname: '',
         email: '',
-        dateCreated: ''
+        date: ''
       },
       // 用户校验
       usersVerify: {

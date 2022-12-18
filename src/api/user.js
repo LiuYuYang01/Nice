@@ -36,6 +36,25 @@ export function updateUsersAPI(data) {
   })
 }
 
+// 修改用户信息
+export function updateInfoUsersAPI(data) {
+  return request({
+    url: '/user/updateInfo',
+    method: 'POST',
+    data
+  })
+}
+
+// http://127.0.0.1:9999/api/user/safe
+// 修改安全信息
+export function safeUsersAPI(data) {
+  return request({
+    url: '/user/safe',
+    method: 'POST',
+    data
+  })
+}
+
 // 获取用户
 export function getUsersAPI(id) {
   return request({

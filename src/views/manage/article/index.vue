@@ -24,7 +24,9 @@
         </span>
 
         <!-- 文章列表 -->
-        <el-table v-loading="loading" :data="articleForm.list" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+        <el-table v-loading="loading" :data="articleForm.list" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}" @selection-change="selectArticle">
+          <el-table-column type="selection" width="55" align="center" />
+
           <el-table-column prop="title" label="标题" align="center" width="400">
             <template slot-scope="{row}">
               <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
@@ -51,7 +53,16 @@
         </el-table>
 
         <!-- 分页 -->
-        <el-row type="flex" justify="end" style="margin-top:40px">
+        <el-row type="flex" justify="space-between" style="margin-top:40px;align-items: center">
+          <el-dropdown trigger="click" @command="sift">
+            <el-button size="small">
+              筛选<i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="delete">批量删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <el-pagination background layout="prev, pager, next" :total="1000" />
         </el-row>
       </el-tab-pane>
@@ -64,7 +75,9 @@
         </span>
 
         <!-- 审核列表 -->
-        <el-table v-loading="loading" :data="articleForm.audit" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+        <el-table v-loading="loading" :data="articleForm.audit" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}" @selection-change="selectArticle">
+          <el-table-column type="selection" width="55" align="center" />
+
           <el-table-column prop="title" label="标题" align="center" width="400">
             <template slot-scope="{row}">
               <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
@@ -82,7 +95,7 @@
           <el-table-column fixed="right" label="操作" width="150" align="center">
             <template slot-scope="{row}">
               <el-row type="flex" justify="center">
-                <el-button type="text" size="small" @click="pass(row.id)">通过</el-button>
+                <el-button type="text" size="small" @click="audit(row.id)">通过</el-button>
                 <el-button type="text" size="small" style="color:#F56C6C" @click="del(row.id)">删除</el-button>
               </el-row>
             </template>
@@ -90,7 +103,17 @@
         </el-table>
 
         <!-- 分页 -->
-        <el-row type="flex" justify="end" style="margin-top:40px">
+        <el-row type="flex" justify="space-between" style="margin-top:40px;align-items: center">
+          <el-dropdown trigger="click" @command="sift">
+            <el-button size="small">
+              筛选<i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="audit">批量审核</el-dropdown-item>
+              <el-dropdown-item command="delete">批量删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <el-pagination background layout="prev, pager, next" :total="1000" />
         </el-row>
       </el-tab-pane>
@@ -103,7 +126,9 @@
         </span>
 
         <!-- 文章列表 -->
-        <el-table v-loading="loading" :data="articleForm.draftBin" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+        <el-table v-loading="loading" :data="articleForm.draftBin" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}" @selection-change="selectArticle">
+          <el-table-column type="selection" width="55" align="center" />
+
           <el-table-column prop="title" label="标题" align="center" width="400">
             <template slot-scope="{row}">
               <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
@@ -129,7 +154,17 @@
         </el-table>
 
         <!-- 分页 -->
-        <el-row type="flex" justify="end" style="margin-top:40px">
+        <el-row type="flex" justify="space-between" style="margin-top:40px;align-items: center">
+          <el-dropdown trigger="click" @command="sift">
+            <el-button size="small">
+              筛选<i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="publish">批量发布</el-dropdown-item>
+              <el-dropdown-item command="delete">批量删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <el-pagination background layout="prev, pager, next" :total="1000" />
         </el-row>
       </el-tab-pane>
@@ -138,10 +173,13 @@
       <el-tab-pane name="reclaim">
         <span slot="label">
           <i class="el-icon-delete" /> 回收站
+          <el-badge :value="articleForm.recycleBin.length" />
         </span>
 
         <!-- 文章列表 -->
-        <el-table v-loading="loading" :data="articleForm.recycleBin" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
+        <el-table v-loading="loading" :data="articleForm.recycleBin" border style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}" @selection-change="selectArticle">
+          <el-table-column type="selection" width="55" align="center" />
+
           <el-table-column prop="title" label="标题" align="center" width="400">
             <template slot-scope="{row}">
               <a :href="jump(row.id)" class="hoverTitle">{{ row.title }}</a>
@@ -167,7 +205,17 @@
         </el-table>
 
         <!-- 分页 -->
-        <el-row type="flex" justify="end" style="margin-top:40px">
+        <el-row type="flex" justify="space-between" style="margin-top:40px;align-items: center">
+          <el-dropdown trigger="click" @command="sift">
+            <el-button size="small">
+              筛选<i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="forceDel">批量删除</el-dropdown-item>
+              <el-dropdown-item command="recover">批量恢复</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <el-pagination background layout="prev, pager, next" :total="1000" />
         </el-row>
       </el-tab-pane>
@@ -176,12 +224,19 @@
 </template>
 
 <script>
-import { delArticleAPI, getAllArticleAPI } from '@/api/article'
+import {
+  delArticleAPI,
+  auditAPI,
+  recoverAPI,
+  forceDelAPI,
+  getAllArticleAPI,
+  batchAPI
+} from '@/api/article'
 import { getAllCateAPI } from '@/api/cate'
-import { customAPI } from '@/api/senior'
 export default {
   data() {
     return {
+      loading: false,
       search: '',
       articleForm: {
         list: [], // 正常文章
@@ -191,10 +246,14 @@ export default {
       },
       cates: [], // 分类列表
       activeName: 'article',
-      loading: false
+      selectArticleList: []
     }
   },
   created() {
+    if (this.$route.query.activeName) {
+      this.activeName = this.$route.query.activeName
+    }
+
     this.get()
     this.getCate()
   },
@@ -221,12 +280,16 @@ export default {
         // item.is_delete = 1 代表回收站文章
         data.filter((item) => {
           // 如果没有被删除并且审核成功而且不是草稿就正常显示文章
-          if (item.is_delete === 0 && item.is_audit === 1 && item.is_draft === 0) {
+          if (
+            item.is_delete === 0 &&
+            item.is_audit === 1 &&
+            item.is_draft === 0
+          ) {
             list.push(item)
           }
 
           // 筛选待审核的文章
-          if (item.is_audit === 0) {
+          if (item.is_audit === 0 && item.is_draft === 0) {
             audit.push(item)
           }
 
@@ -266,14 +329,14 @@ export default {
       const catesList = []
 
       // 通过分类id筛选出对应的分类名称
-      ids.filter(id => {
-        const item = this.cates.filter(item => String(item.id) === id)
+      ids.filter((id) => {
+        const item = this.cates.filter((item) => String(item.id) === id)
         item && catesList.push(...item)
       })
 
       if (catesList.length !== 0) {
         const cate = []
-        catesList.filter(item => {
+        catesList.filter((item) => {
           cate.push(item.title)
         })
 
@@ -288,30 +351,28 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(async() => {
-          console.log(id)
-          const { message, success } = await delArticleAPI({ id })
-          if (success) {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
+      }).then(async() => {
+        console.log(id)
+        const { message, success } = await delArticleAPI({ id })
+        if (success) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
 
-            // 获取最新数据
-            this.get()
-          } else {
-            this.$message({
-              type: 'error',
-              message
-            })
-          }
-        })
+          // 获取最新数据
+          this.get()
+        } else {
+          this.$message({
+            type: 'error',
+            message
+          })
+        }
+      })
     },
     // 通过审核
-    async pass(id) {
-      const sql = `update articles set is_audit = 1 where id = ${id}`
-      const { message, success } = await customAPI({ sql })
+    async audit(id) {
+      const { message, success } = await auditAPI({ id })
 
       if (success) {
         this.$message.success('审核成功')
@@ -322,8 +383,7 @@ export default {
     },
     // 恢复文章
     async recover(id) {
-      const sql = `update articles set is_delete = 0 where id = ${id}`
-      const { message, success } = await customAPI({ sql })
+      const { message, success } = await recoverAPI({ id })
 
       if (success) {
         this.$message.success('恢复成功')
@@ -338,22 +398,124 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(async() => {
-          const sql = `delete from articles where id = ${id}`
-          const { message, success } = await customAPI({ sql })
+      }).then(async() => {
+        const { message, success } = await forceDelAPI({ id })
 
-          if (success) {
-            this.$message.success('删除成功')
-            this.get()
-          } else {
-            this.$message.error(message)
-          }
-        })
+        if (success) {
+          this.$message.success('删除成功')
+          this.get()
+        } else {
+          this.$message.error(message)
+        }
+      })
     },
     // 跳转到编辑页
     jump(id) {
       return `#/write?id=${id}`
+    },
+    // 获取选中的文章
+    selectArticle(arr) {
+      this.selectArticleList = arr.map((item) => item.id)
+      console.log(this.selectArticleList)
+    },
+    // 筛选
+    async sift(type) {
+      if (type === 'audit') {
+        // 审核
+        const ids = this.selectArticleList.join(',')
+
+        const obj = {
+          type: 'audit',
+          ids,
+          failurePrompt: '批量审核失败',
+          message: '批量审核成功'
+        }
+
+        const { message, success } = await batchAPI(obj)
+
+        if (success) {
+          this.$message.success('批量审核成功')
+          this.get()
+        } else {
+          this.$message.error(message)
+        }
+      } else if (type === 'publish') {
+        // 发布
+        const ids = this.selectArticleList.join(',')
+
+        const obj = {
+          type: 'publish',
+          ids,
+          failurePrompt: '批量发布失败',
+          message: '批量发布成功'
+        }
+
+        const { message, success } = await batchAPI(obj)
+
+        if (success) {
+          this.$message.success('批量发布成功')
+          this.get()
+        } else {
+          this.$message.error(message)
+        }
+      } else if (type === 'delete') {
+        // 删除
+        const ids = this.selectArticleList.join(',')
+
+        const obj = {
+          type: 'delete',
+          ids,
+          failurePrompt: '批量删除失败',
+          message: '批量删除成功'
+        }
+
+        const { message, success } = await batchAPI(obj)
+
+        if (success) {
+          this.$message.success('批量删除成功')
+          this.get()
+        } else {
+          this.$message.error(message)
+        }
+      } else if (type === 'forceDel') {
+        // 强制删除
+        const ids = this.selectArticleList.join(',')
+
+        const obj = {
+          type: 'forceDel',
+          ids,
+          failurePrompt: '批量删除失败',
+          message: '批量删除成功'
+        }
+
+        const { message, success } = await batchAPI(obj)
+
+        if (success) {
+          this.$message.success('批量删除成功')
+          this.get()
+        } else {
+          this.$message.error(message)
+        }
+      } else if (type === 'recover') {
+        // 恢复
+        const ids = this.selectArticleList.join(',')
+
+        const obj = {
+          type: 'recover',
+          ids,
+          failurePrompt: '批量恢复失败',
+          message: '批量恢复成功'
+        }
+
+        const { message, success } = await batchAPI(obj)
+
+        if (success) {
+          this.$message.success('批量恢复成功')
+          this.get()
+        } else {
+          this.$message.error(message)
+        }
+      }
     }
   }
 }

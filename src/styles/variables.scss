@@ -10,7 +10,7 @@ $menuBg: var(--menuBg, linear-gradient(135deg, #8f75da 0%, #727cf5 60%));
 $menuHover: var(--menuHover, transparent);
 $subMenuBg: var(--subMenuBg, transparent);
 $subMenuHover: var(--subMenuHover, transparent);
-$oneMenuHover: var(--oneMenuHover, transparent);
+$oneMenuHover: var(--oneMenuHover, red);
 $boxShadow: var(--boxShadow, none);
 
 $sideBarWidth: 210px;

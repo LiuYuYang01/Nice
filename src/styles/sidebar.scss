@@ -1,3 +1,6 @@
+@import "~@/styles/mixin.scss";
+@import "~@/styles/variables.scss";
+
 #app {
   .main-container {
     min-height: 100%;
@@ -190,6 +193,8 @@
 
 // when menu collapsed
 .el-menu--vertical {
+  // background-color: #323a46;
+  background: $menuBg;
   &>.el-menu {
     .svg-icon {
       margin-right: 16px;

@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: ' 一款追求极致的CMS管理系统',
+  title: ' 现代化后台管理系统',
 
   /**
    * @type {boolean} true | false

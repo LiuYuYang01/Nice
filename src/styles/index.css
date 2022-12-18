@@ -170,15 +170,18 @@ body::-webkit-scrollbar-thumb {
 
 /* 提示框标题背景 */
 .el-dialog__header {
-  background-color: #727cf5;
-  padding-bottom: 17px;
+    background-color: #727cf5;
+    padding-bottom: 17px;
 }
+
 .el-dialog__title {
-  color: #fff !important;
+    color: #fff !important;
 }
+
 .el-dialog__body {
-  padding: 30px 40px 0px 10px;
+    padding: 30px 40px 0px 10px;
 }
+
 .el-dialog__headerbtn .el-dialog__close {
-  color: #fff;
+    color: #fff;
 }
