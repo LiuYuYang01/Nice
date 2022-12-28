@@ -33,8 +33,8 @@
               </el-form-item>
 
               <el-form-item>
-                <el-button type="primary" style="width: 100%" @click="onSubmit">
-                  <i class="el-icon-edit-outline" style="margin-right:5px" />保存
+                <el-button type="primary" style="width: 100%" @click="saveConfig">
+                  <i class="el-icon-edit-outline" /> 保存
                 </el-button>
               </el-form-item>
             </el-form>
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { updateWebAPI, getConfigAPI } from '@/api/setting'
 export default {
   data() {
     return {
@@ -69,10 +70,41 @@ export default {
       }
     }
   },
+  created() {
+    this.getConfigAPI()
+  },
   methods: {
-    // 表单提交
-    onSubmit() {
-      console.log('submit!')
+    // 保存配置
+    async saveConfig() {
+      const { message, success } = await updateWebAPI(this.siteConfig)
+
+      if (success) {
+        this.getConfigAPI()
+
+        this.$notify({
+          title: '成功',
+          message: '网站配置保存成功',
+          type: 'success'
+        })
+
+        this.getConfigAPI()
+      } else {
+        this.$notify.error({
+          title: '警告',
+          message
+        })
+      }
+    },
+    // 获取配置信息
+    async getConfigAPI() {
+      const { data, message, success } = await getConfigAPI()
+      console.log(data.web)
+
+      if (success) {
+        this.siteConfig = JSON.parse(data.web)
+      } else {
+        this.$message.error(message)
+      }
     }
   }
 }
@@ -84,20 +116,20 @@ export default {
   padding: 0 !important;
 }
 
-::v-deep .el-tabs--top{
+::v-deep .el-tabs--top {
   padding: 50px;
   background-color: #fff !important;
 }
 
-::v-deep .el-form--label-top .el-form-item__label{
+::v-deep .el-form--label-top .el-form-item__label {
   padding: 0;
 }
 
-::v-deep .el-form-item{
+::v-deep .el-form-item {
   margin-bottom: 10px;
 }
 
-::v-deep .el-textarea textarea{
+::v-deep .el-textarea textarea {
   min-height: 80px !important;
 }
 </style>

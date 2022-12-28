@@ -30,7 +30,7 @@
             <div class="title text-gradient">系统配置</div>
 
             <el-form-item label="Token">
-              <el-input v-model="configForm.system.token" disabled style="width: 70%;" />
+              <el-input v-model="token" disabled style="width: 70%;" />
             </el-form-item>
 
             <el-form-item label="编辑器">
@@ -90,16 +90,16 @@
             <el-form-item label="文件格式">
               <el-checkbox-group v-model="configForm.file.format">
                 <div>
-                  <el-checkbox :label="1">图片文件（jpg jpeg png gif）</el-checkbox>
+                  <el-checkbox label="jpg/jpeg/png/gif">图片文件（jpg jpeg png gif）</el-checkbox>
                 </div>
                 <div>
-                  <el-checkbox :label="2">多媒体文件（mp3 mp4 mov avi）</el-checkbox>
+                  <el-checkbox label="mp3/mp4/mov/avi">多媒体文件（mp3 mp4 mov avi）</el-checkbox>
                 </div>
                 <div>
-                  <el-checkbox :label="3">常用档案文件（txt doc xls ppt pdf zip rar）</el-checkbox>
+                  <el-checkbox label="txt/doc/xls/ppt/pdf/zip/rar">常用档案文件（txt doc xls ppt pdf zip rar）</el-checkbox>
                 </div>
                 <div>
-                  <el-checkbox :label="4">
+                  <el-checkbox :label="configForm.file.otherFormat">
                     其他格式：
                     <el-input v-model="configForm.file.otherFormat" size="small" style="width: 70%" />
                   </el-checkbox>
@@ -122,18 +122,56 @@
             </el-form-item>
           </div>
 
-          <!-- 保存配置 -->
-          <el-button type="primary" style="width: 130px;" size="small" @click="onSubmit">
-            <i class="el-icon-edit-outline" style="margin-right:5px" />保存配置
-          </el-button>
+          <el-row type="flex" justify="space-between" style="width:300px">
+            <!-- 保存配置 -->
+            <el-button type="primary" size="small" style="padding: 9px 30px;" @click="saveConfig">
+              <i class="el-icon-edit-outline" /> 保存配置
+            </el-button>
+
+            <!-- 导入配置 -->
+            <el-upload
+              class="upload-demo import"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-change="openFile"
+              style="margin-left: 10px;"
+            >
+              <el-button size="small" type="success">
+                <i class="el-icon-tickets" /> 导入配置
+              </el-button>
+            </el-upload>
+
+            <!-- 导出配置 -->
+            <el-button size="small" style="margin-left:10px" @click="exportConfig">
+              <i class="el-icon-coin" /> 导出配置
+            </el-button>
+          </el-row>
         </el-form>
       </el-col>
     </el-row>
+
+    <el-dialog title="系统配置" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+      <div class="export">
+        <p class="prompt"><i class="el-icon-warning" /> 请把以下 JSON 配置代码保存</p>
+
+        <!-- 内容 -->
+        <div class="con">
+          <p>{{ JSON.stringify(configForm) }}</p>
+        </div>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { saveAs } from 'file-saver'
 import { getToken } from '@/utils/auth'
+import { updateSystemAPI, getConfigAPI } from '@/api/setting'
 export default {
   data() {
     return {
@@ -141,35 +179,113 @@ export default {
       tabPosition: 'top',
       // 站点配置
       configForm: {
+        // 系统配置
         system: {
-          token: '',
           editor: 2
         },
+        // 用户配置
         user: {
           is_enroll: 1,
           identity: 3
         },
+        // 文件配置
         file: {
           is_storage: 1,
           bucket: '',
           accessKeyId: '',
           accessKeySecret: '',
           fileLimits: '5M',
-          format: [3, 4],
+          format: ['txt/doc/xls/ppt/pdf/zip/rar', 'HTML/CSS/JavaScript'],
           otherFormat: 'HTML/CSS/JavaScript'
         },
+        // 文章配置
         article: {
           is_audit: 1
         }
       },
-      activeName: [1]
+      activeName: [1],
+      dialogVisible: false
     }
   },
   created() {
-    this.configForm.system.token = getToken()
+    this.token = getToken()
+    this.getConfigAPI()
   },
   methods: {
-    onSubmit() {}
+    // 获取配置信息
+    async getConfigAPI() {
+      const { data, message, success } = await getConfigAPI()
+
+      if (success) {
+        this.configForm = JSON.parse(data.config)
+      } else {
+        this.$message.error(message)
+      }
+    },
+    // 保存配置
+    async saveConfig() {
+      // 修改系统配置信息
+      const { message, success } = await updateSystemAPI(this.configForm)
+
+      if (success) {
+        this.getConfigAPI()
+
+        this.$notify({
+          title: '成功',
+          message: '保存系统配置成功',
+          type: 'success'
+        })
+      } else {
+        this.$notify.error({
+          title: '警告',
+          message
+        })
+      }
+    },
+    // 导出配置
+    exportConfig() {
+      console.log(JSON.stringify(this.configForm))
+      var data = JSON.stringify(this.configForm)
+      const str = new Blob([data], { type: 'text/plain;charset=utf-8' })
+      // 注意这里要手动写上文件的后缀名
+      saveAs(str, `setting.txt`)
+    },
+    handleClose() {},
+    // 上传文件
+    openFile(file) {
+      if (file.status === 'success') {
+        var reader = new FileReader()
+        reader.onload = async() => {
+          if (reader.result) {
+            // 解析文件的内容
+            console.log(reader.result)
+
+            // 导入系统配置信息
+            const { message, success } = await updateSystemAPI(
+              JSON.parse(reader.result)
+            )
+
+            if (success) {
+              this.getConfigAPI()
+
+              this.$notify({
+                title: '成功',
+                message: '导入系统配置成功',
+                type: 'success'
+              })
+
+              this.getConfigAPI()
+            } else {
+              this.$notify.error({
+                title: '警告',
+                message
+              })
+            }
+          }
+        }
+        reader.readAsText(file.raw)
+      }
+    }
   }
 }
 </script>
@@ -248,6 +364,33 @@ export default {
     line-height: 20px;
     color: #cfcfcf;
     font-size: 12px;
+  }
+}
+
+::v-deep .el-dialog__body {
+  padding: 0 20px 0px 20px;
+  line-height: 25px;
+}
+
+// 导出
+.export {
+  .prompt {
+    display: flex;
+    align-items: center;
+    color: #666;
+
+    i {
+      color: #727cf5;
+      font-size: 20px;
+      margin-right: 5px;
+    }
+  }
+
+  .con {
+    padding: 20px 40px;
+    border-radius: 5px;
+    color: #8a8a8a;
+    background-color: #f8f8f8;
   }
 }
 </style>

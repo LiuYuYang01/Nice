@@ -53,7 +53,7 @@
         </el-table>
 
         <!-- 分页 -->
-        <el-row type="flex" justify="space-between" style="margin-top:40px;align-items: center">
+        <el-row type="flex" justify="space-between" style="margin-top:40px; align-items: center">
           <el-dropdown trigger="click" @command="sift">
             <el-button size="small">
               筛选<i class="el-icon-arrow-down el-icon--right" />

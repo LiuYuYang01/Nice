@@ -128,7 +128,7 @@ export default {
           }
         })
     },
-    // 获取分类列表
+    // 获取标签列表
     async getAllTagAPI() {
       this.tag_loading = true
 

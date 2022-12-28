@@ -46,7 +46,7 @@
               :data="cateList"
               :props="{children:'children',label:'title'}"
               :default-expanded-keys="[15]"
-              :default-checked-keys="[articleForm.cates]"
+              :default-checked-keys="articleForm.cates.split(',')"
               @check-change="handleCheckChange"
             />
           </div>
@@ -64,27 +64,17 @@
             <h4 class="title">标签栏</h4>
 
             <!-- 添加标签 -->
-            <el-row>
+            <el-row style="margin: 0 25px 5px;">
               <el-col>
-                <!-- <el-input v-model="tagValut" size="mini" placeholder="添加标签" @keyup.enter.native="addTags" /> -->
-                <el-autocomplete
-                  v-model="articleForm.tags"
-                  class="inline-input"
-                  size="mini"
-                  :fetch-suggestions="querySearch"
-                  placeholder="请输入内容"
-                  :trigger-on-focus="false"
-                  @select="handleSelect"
-                  @keyup.enter.native="addTags"
-                />
+                <el-input size="small" placeholder="请输入内容" @click.native="addTag" />
               </el-col>
             </el-row>
 
             <!-- 列表 -->
             <el-row type="flex" justify="center">
-              <div class="tag" style="padding:0 20px">
-                <el-tag v-for="item in tagsItems" :key="item.label" :type="item.type" effect="dark" size="mini">
-                  {{ item.label }}
+              <div class="tag" style="padding: 5px 20px 0;">
+                <el-tag v-for="item in tagsItems" :key="item.title" :type="item.type" effect="dark" size="mini">
+                  {{ item.title }}
                 </el-tag>
               </div>
             </el-row>
@@ -132,6 +122,18 @@
 
     <!-- 预览组件 -->
     <v-md-preview-html :html="html" preview-class="vuepress-markdown-body" style="margin-top:20px" />
+
+    <!-- 标签选择框 -->
+    <el-dialog title="选择标签" :visible.sync="dialogVisible" width="30%" class="tag" @close="close">
+      <el-checkbox-group v-for="item in tagData" :key="item.id" v-model="tagSelect">
+        <el-checkbox :label="item.id">{{ item.title }}</el-checkbox>
+      </el-checkbox-group>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="close">取 消</el-button>
+        <el-button size="small" type="primary" @click="selectTags">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -140,6 +142,7 @@ import { getAllCateAPI } from '@/api/cate'
 import { addArticleAPI, updAtearticleAPI, getArticleAPI } from '@/api/article'
 import { transListToTreeData } from '@/utils'
 import { dateFormat } from '@/filter'
+import { getAllTagAPI } from '@/api/tag'
 // eslint-disable-next-line no-unused-vars
 import VueMarkdownEditor, { xss } from '@kangc/v-md-editor'
 export default {
@@ -167,12 +170,13 @@ export default {
         is_delete: 0, // 是否删除
         date: '' // 时间
       },
-      publishORsave: '',
-      tagsItems: [],
-      tags: [],
+      publishORsave: '', // 发布或保存
       // el-collapse设置是否默认展开
       activeNames: ['unfold'],
-      restaurants: []
+      tagsItems: [], // 标签列表
+      tagData: [], // 标签列表
+      tagSelect: [], // 选中的标签
+      dialogVisible: false // 标签选择框
     }
   },
   // 渲染tabs标签列表
@@ -180,8 +184,13 @@ export default {
     this.id = this.$route.query.id
 
     await this.getAllCateAPI()
-    this.restaurants = this.loadAll()
-    this.echoData()
+    await this.getAllTagAPI()
+    await this.echoData()
+
+    if (this.id) {
+      this.tagSelect = this.articleForm.tags.split(',').map(item => Number(item))
+      this.selectTags()
+    }
   },
   methods: {
     // 获取分类列表
@@ -194,7 +203,6 @@ export default {
       this.cateList = transListToTreeData(data, 0)
 
       this.cateLoading = false
-      console.log('分类列表：', this.cateList)
     },
     // 找出被勾选的分类
     handleCheckChange() {
@@ -206,7 +214,6 @@ export default {
       const menuArr = this.unique(arr) // 去除重复的节点
 
       this.articleForm.cates = menuArr.join(',')
-      console.log(this.articleForm.cates)
     },
     // 数组去重
     unique(arr) {
@@ -219,60 +226,14 @@ export default {
       }
       return newArr
     },
-    // 标签远程搜索
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants
-      // 调用 callback 返回建议列表的数据
-      cb(results)
-    },
-    // 标签过滤
-    createFilter(queryString) {
-      return (restaurant) => {
-        return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
-        )
-      }
-    },
-    // 所有标签
-    loadAll() {
-      return [
-        { value: '大前端' },
-        { value: 'HTML' },
-        { value: 'CSS' },
-        { value: 'JavaScript' },
-        { value: 'Vue' },
-        { value: 'React' },
-        { value: 'Angular' },
-        { value: 'Nodejs' }
-      ]
-    },
-    handleSelect(item) {
-      console.log(item)
-    },
-    // 按下回车添加标签
-    addTags() {
-      // 添加标签
-      const add = (type) => {
-        this.tagsItems.push({ type, label: this.articleForm.tags })
-        this.articleForm.tags = ''
-      }
+    // 获取标签列表
+    async getAllTagAPI() {
+      const { data, message, success } = await getAllTagAPI()
 
-      if (this.tagsItems.length === 0) {
-        add('')
-      } else if (this.tagsItems.length === 1) {
-        add('success')
-      } else if (this.tagsItems.length === 2) {
-        add('warning')
-      } else if (this.tagsItems.length === 3) {
-        add('danger')
-      } else if (this.tagsItems.length === 4) {
-        add('info')
-      } else if (this.tagsItems.length === 5) {
-        this.$message.error('最多只能添加5个标签~')
+      if (success) {
+        this.tagData = data
+      } else {
+        this.$message.error(message)
       }
     },
     // 发布 | 编辑文章
@@ -332,6 +293,41 @@ export default {
       } else {
         this.$message.error(message)
       }
+    },
+    // 添加标签
+    addTag() {
+      this.tagSelect = this.tagsItems.map(item => item.id)
+
+      this.dialogVisible = true
+    },
+    // 取消
+    close() {
+      this.tagSelect = []
+      this.dialogVisible = false
+    },
+    // 提交
+    selectTags() {
+      const tags = []
+
+      // 封装一个添加方法
+      const add = (type, title, id) => tags.push({ type, title, id })
+
+      // 添加标签
+      this.tagData.forEach((item) => {
+        if (this.tagSelect.includes(item.id)) {
+          if (tags.length === 0) add('', item.title, item.id)
+          else if (tags.length === 1) add('success', item.title, item.id)
+          else if (tags.length === 2) add('warning', item.title, item.id)
+          else if (tags.length === 3) add('danger', item.title, item.id)
+          else if (tags.length === 4) add('info', item.title, item.id)
+        }
+      })
+
+      this.tagsItems = tags
+
+      this.articleForm.tags = this.tagSelect.join(',')
+
+      this.dialogVisible = false
     }
   }
 }
@@ -476,5 +472,18 @@ export default {
   width: 225px;
   margin-left: 20px;
   margin-bottom: 10px;
+}
+
+// 标签选择框
+::v-deep .tag .el-dialog__body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px 40px 0px 40px;
+}
+
+::v-deep .tag .el-checkbox {
+  margin-bottom: 20px;
+  margin-right: 25px;
 }
 </style>

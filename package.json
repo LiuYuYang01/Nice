@@ -21,6 +21,7 @@
     "echarts": "^5.4.0",
     "element-resize-detector": "^1.2.4",
     "element-ui": "2.13.2",
+    "file-saver": "^2.0.5",
     "i": "^0.3.7",
     "js-cookie": "2.2.0",
     "normalize.css": "7.0.0",

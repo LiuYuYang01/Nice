@@ -7,7 +7,8 @@
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <!-- <img v-if="logo" :src="logo" class="sidebar-logo"> -->
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <!-- id为1就添加类名：text-gradient -->
+        <h1 ref="aaa" :class="{'sidebar-title':true,'gradient':id === '1'}">{{ title }} </h1>
       </router-link>
     </transition>
   </div>
@@ -38,7 +39,11 @@ export default {
   watch: {
     id: {
       handler(id) {
+        console.log(id)
         if (id === '1') {
+          // console.log(this.$refs)
+          // console.log(document.querySelector('.sidebar-title'), 6666666)
+
           this.logo = require('@/assets/Nice/logo2.png')
         } else {
           this.logo = require('@/assets/Nice/logo1.png')
@@ -52,6 +57,20 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/styles/variables.scss";
+.gradient {
+  display: inline-block;
+  color: #8f75da;
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 bottom,
+    from(#8f75da),
+    to(#727cf5)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .sidebarLogoFade-enter-active {
   transition: opacity 1.5s;
 }
@@ -87,7 +106,7 @@ export default {
       color: $title;
       font-weight: 600;
       line-height: 50px;
-      font-size: 30px;
+      font-size: 23px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }

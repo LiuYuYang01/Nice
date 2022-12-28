@@ -54,6 +54,10 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item label="图标" prop="icon">
+          <el-input v-model="cateForm.icon" />
+        </el-form-item>
+
         <el-form-item label="描述" prop="description">
           <el-input v-model="cateForm.description" />
         </el-form-item>
@@ -92,6 +96,7 @@ export default {
         title: '',
         mark: '',
         pid: '',
+        icon: '',
         description: ''
       },
       // 分类校验
@@ -193,19 +198,18 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(async() => {
+        const { message, success } = await delCateAPI({ id })
+
+        if (success) {
+          this.$message.success('删除分类成功')
+
+          // 获取最新数据
+          this.getAllCateAPI()
+        } else {
+          this.$message.error(message)
+        }
       })
-        .then(async() => {
-          const { message, success } = await delCateAPI({ id })
-
-          if (success) {
-            this.$message.success('删除分类成功')
-
-            // 获取最新数据
-            this.getAllCateAPI()
-          } else {
-            this.$message.error(message)
-          }
-        })
     },
     // 编辑回显分类数据
     async updateCateAPI(id) {
@@ -221,29 +225,37 @@ export default {
     async btnOk() {
       if (this.title === '新增分类' || this.title === '新增子分类') {
         // 新增分类
-        const { message, success } = await addCateAPI(this.cateForm)
+        this.$refs.cate.validate(async(isOk) => {
+          if (isOk) {
+            const { message, success } = await addCateAPI(this.cateForm)
 
-        if (success) {
-          this.$message.success('新增分类成功')
-          // 关闭弹框 重置数据
-          this.close()
-          // 获取最新数据
-          this.getAllCateAPI()
-        } else {
-          this.$message.error(message)
-        }
+            if (success) {
+              this.$message.success('新增分类成功')
+              // 关闭弹框 重置数据
+              this.close()
+              // 获取最新数据
+              this.getAllCateAPI()
+            } else {
+              this.$message.error(message)
+            }
+          }
+        })
       } else if (this.title === '编辑分类') {
         // 编辑分类
-        const { message, success } = await updateCateAPI(this.cateForm)
-        if (success) {
-          this.$message.success('编辑分类成功')
-          // 关闭弹框 重置数据
-          this.close()
-          // 获取最新数据
-          this.getAllCateAPI()
-        } else {
-          this.$message.error(message)
-        }
+        this.$refs.cate.validate(async(isOk) => {
+          if (isOk) {
+            const { message, success } = await updateCateAPI(this.cateForm)
+            if (success) {
+              this.$message.success('编辑分类成功')
+              // 关闭弹框 重置数据
+              this.close()
+              // 获取最新数据
+              this.getAllCateAPI()
+            } else {
+              this.$message.error(message)
+            }
+          }
+        })
       }
     }
   }

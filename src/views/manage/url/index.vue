@@ -41,6 +41,10 @@
           <el-input v-model="linkForm.icon" />
         </el-form-item>
 
+        <el-form-item label="标识" prop="mark">
+          <el-input v-model="linkForm.mark" />
+        </el-form-item>
+
         <el-form-item label="描述" prop="description">
           <el-input v-model="linkForm.description" />
         </el-form-item>
@@ -69,6 +73,7 @@ export default {
         url: '',
         email: '',
         icon: '',
+        mark: '',
         description: ''
       },
       // 友联校验
@@ -87,13 +92,13 @@ export default {
           { min: 1, max: 50, message: '友联链接限制为 1 ~ 50 个字符' }
         ],
         email: [
-          { required: true, message: '友联邮箱不能为空' },
           { min: 1, max: 50, message: '友联邮箱限制为 1 ~ 50 个字符' }
         ],
-        icon: [{ required: true, message: '友联图标不能为空' }],
+        mark: [
+          { min: 1, max: 10, message: '友联标识限制为 1 ~ 10 个字符' }
+        ],
         description: [
-          { required: true, message: '友联描述不能为空' },
-          { min: 1, max: 50, message: '友联描述限制为 1 ~ 50 个字符' }
+          { min: 1, max: 100, message: '友联描述限制为 1 ~ 100 个字符' }
         ]
       }
     }
@@ -110,6 +115,7 @@ export default {
         url: '',
         email: '',
         icon: '',
+        mark: '',
         description: ''
       }
 
@@ -182,6 +188,8 @@ export default {
         } else {
           this.$message.error(message)
         }
+
+        console.log(this.linkForm)
       } else if (this.title === '编辑友联') {
         // 编辑友联
         const { message, success } = await updateLinkAPI(this.linkForm)

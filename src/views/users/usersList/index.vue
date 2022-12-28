@@ -37,7 +37,15 @@
         <template slot-scope="{row}">
           <el-row>
             <!-- {{ row }} -->
-            <el-switch v-model="row.state" active-text="off" inactive-text="on" style="width: 105px;justify-content:space-between" />
+            <el-switch
+              v-model="row.state"
+              active-text="off"
+              inactive-text="on"
+              :active-value="1"
+              :inactive-value="0"
+              style="width: 105px;justify-content:space-between"
+              @change="switchState($event,row.id)"
+            />
           </el-row>
         </template>
       </el-table-column>
@@ -261,7 +269,6 @@ export default {
               this.$message.error(message)
             }
           } else if (this.title === '修改用户') {
-            console.log(2)
             const { message, success } = await updateUsersAPI(this.usersForm)
             if (success) {
               this.$message.success('修改用户成功')
@@ -282,6 +289,10 @@ export default {
           return this.identity[key].name
         }
       }
+    },
+    // 开关
+    async switchState(val, id) {
+      console.log(val, id)
     }
   }
 }

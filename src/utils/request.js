@@ -5,8 +5,8 @@ import { getTime } from '@/utils/auth'
 import { Message } from 'element-ui'
 
 // Token到期时间 以秒为单位
-// const TimeOut = 60 * 60 * 24 // 一天后到期
-const TimeOut = (60 * 60 * 24) * 3 // 3天后到期
+const TimeOut = 60 * 5 // 5分钟后到期
+// const TimeOut = (60 * 60 * 24) * 3 // 3天后到期
 
 // 创建 Axios 实例
 const service = axios.create({
