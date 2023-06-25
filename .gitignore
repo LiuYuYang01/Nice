@@ -16,3 +16,9 @@ admin/*.njsproj
 admin/*.sln
 
 api/node_modules/
+api/dist/
+api/npm-debug.log*
+api/yarn-debug.log*
+api/yarn-error.log*
+api/package-lock.json
+api/tests/**/coverage/
