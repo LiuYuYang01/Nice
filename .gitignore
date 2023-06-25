@@ -1,16 +1,18 @@
 .DS_Store
-node_modules/
-dist/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-package-lock.json
-tests/**/coverage/
+admin/node_modules/
+admin/dist/
+admin/npm-debug.log*
+admin/yarn-debug.log*
+admin/yarn-error.log*
+admin/package-lock.json
+admin/tests/**/coverage/
 
 # Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
+admin/.idea
+admin/.vscode
+admin/*.suo
+admin/*.ntvs*
+admin/*.njsproj
+admin/*.sln
+
+api/node_modules/
